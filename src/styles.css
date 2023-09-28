@@ -1,0 +1,70 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+.chat-container {
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    min-height: 200px;
+}
+
+.chat {
+    padding: 10px;
+    overflow-y: scroll;
+    min-height: 400px;
+    max-height: 400px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.user-message {
+    background-color: #e6efff;
+    text-align: right;
+    float: right; /* Para alinhar à direita */
+    clear: both; /* Para evitar que a próxima mensagem seja exibida ao lado desta */
+    max-width: 70%; /* Define uma largura máxima para evitar ocupar o width inteiro */
+}
+
+.other-message {
+    background-color: #9b959563;
+    text-align: left;
+    float: left; /* Para alinhar à esquerda */
+    clear: both; /* Para evitar que a próxima mensagem seja exibida ao lado desta */
+    max-width: 70%; /* Define uma largura máxima para evitar ocupar o width inteiro */
+}
+
+.input-container {
+    display: flex;
+    padding: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+button {
+    padding: 8px 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
