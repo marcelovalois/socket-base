@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import myCache from './services/cache';
+import myCache from '../services/cache';
 
 const routes = Router();
 
