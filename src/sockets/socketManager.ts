@@ -8,13 +8,14 @@ class SocketManager {
 
     private handleSocketConnection(): void {
         this.io.on('connection', (socket: Socket) => {
-            // console.log('A client has just connected');
+            console.log('A client has just connected', socket.id);
+            socket.emit('getId', socket.id);
 
-            socket.on('sendMessageToServer', async data => {
+            socket.on('sendMessageToServer', async (data: PontuandoMessages) => {
                 socket.broadcast.emit('sendMessageToClient', data);
             });
 
-            socket.on('sendMessageToChatServer', async data => {
+            socket.on('sendMessageToChatServer', async (data: PontuandoMessages) => {
                 socket.broadcast.emit('sendMessageToChatClient', data);
             });
         });

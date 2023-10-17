@@ -1,31 +1,37 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import myCache from '../services/cache';
 import { io } from '../server';
 
 const routes = Router();
 
-routes.post('/users', (req: Request, res: Response) => {
-    const userData = req.body;
+routes.post('/users', (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userData: UserData = req.body;
 
-    const users: any[] = myCache.get('users') || [];
+        const users: UserData[] = myCache.get('users') || [];
 
-    const userExists = users.find(user => user.username === userData.username);
+        const userExists = users.find(user => user.id === userData.id);
 
-    if (!userExists) {
-        users.push(userData);
-        io.emit("sendNewContactToClient", userData);
+        if (!userExists) {
+            users.push(userData);
+            io.emit("sendNewContactToClient", userData);
+        }
+
+        myCache.set('users', users);
+
+        res.status(200).send("Adicionado com sucesso");
+    } catch (error) {
+        next(error);
     }
-
-    myCache.set('users', users);
-
-    res.status(200).send("Adicionado com sucesso");
 })
 
-routes.get('/users', (req: Request, res: Response) => {
-    const users: any[] = myCache.get('users') || [];
-    res.status(200).json(users);
+routes.get('/users', (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const users: UserData[] = myCache.get('users') || [];
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
 })
-
-
 
 export default routes;

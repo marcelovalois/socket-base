@@ -1,7 +1,6 @@
 import express from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import routes from './routes/routes';
 import setupMiddlewares from './middlewares/middlewares';
 import SocketManager from './sockets/socketManager';
 
