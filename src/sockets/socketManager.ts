@@ -8,7 +8,6 @@ class SocketManager {
 
     private handleSocketConnection(): void {
         this.io.on('connection', (socket: Socket) => {
-            console.log('A client has just connected', socket.id);
             socket.emit('getId', socket.id);
 
             socket.on('sendMessageToServer', async (data: PontuandoMessages) => {
@@ -17,6 +16,10 @@ class SocketManager {
 
             socket.on('sendMessageToChatServer', async (data: PontuandoMessages) => {
                 socket.broadcast.emit('sendMessageToChatClient', data);
+            });
+
+            socket.on('disconnect', () => {
+                console.log(`Client ${socket.id} disconnected`);
             });
         });
     }
