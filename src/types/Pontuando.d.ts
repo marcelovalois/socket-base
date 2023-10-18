@@ -1,5 +1,8 @@
-type PontuandoMessages = {
+type PontuandoMessage = {
+    id: string;
     text: string;
     origin: string;
-    id: string;
+    userId: string;
+    incoming: boolean;
+    pontuandoQuote: boolean;
   };

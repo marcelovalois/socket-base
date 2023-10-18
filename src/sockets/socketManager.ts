@@ -10,16 +10,16 @@ class SocketManager {
         this.io.on('connection', (socket: Socket) => {
             socket.emit('getId', socket.id);
 
-            socket.on('sendMessageToServer', async (data: PontuandoMessages) => {
+            socket.on('sendMessageToServer', async (data: PontuandoMessage) => {
                 socket.broadcast.emit('sendMessageToClient', data);
             });
 
-            socket.on('sendMessageToChatServer', async (data: PontuandoMessages) => {
+            socket.on('sendMessageToChatServer', async (data: PontuandoMessage) => {
                 socket.broadcast.emit('sendMessageToChatClient', data);
             });
 
             socket.on('disconnect', () => {
-                console.log(`Client ${socket.id} disconnected`);
+                socket.broadcast.emit('removeContactFromClient', socket.id);
             });
         });
     }
