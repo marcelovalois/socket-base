@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  name     String
+  image    String?
+  type     String?
+  Activity Activity[]
+  Message  Message[]
+  Execution  Execution[]
+
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+
+  @@map("users")
+}
+
+model Activity {
+  id      Int      @id @default(autoincrement())
+  title   String
+  link    String?
+  user_id Int
+  user    User     @relation(fields: [user_id], references: [id])
+  Phrase  Phrase[]
+  Execution  Execution[]
+
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+
+  @@map("activities")
+}
+
+model Message {
+  id              Int     @id @default(autoincrement())
+  text            String
+  pontuando_quote Boolean
+  user_id         Int
+  user            User    @relation(fields: [user_id], references: [id])
+  Execution  Execution[]
+
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  deleted_at DateTime?
+
+  @@map("messages")
+}
+
+model Phrase {
+  id          Int      @id @default(autoincrement())
+  order       Int
+  text        String
+  activity_id Int
+  activity    Activity @relation(fields: [activity_id], references: [id])
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  @@unique([order, activity_id, text])
+  @@map("phrases")
+}
+
+model Execution {
+  id          Int      @id @default(autoincrement())
+  activity_id Int
+  user_id     Int
+  message_id  Int
+  activity    Activity @relation(fields: [activity_id], references: [id])
+  user        User     @relation(fields: [user_id], references: [id])
+  message     Message  @relation(fields: [message_id], references: [id])
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  @@unique([activity_id, user_id, message_id])
+  @@map("executions")
+}
