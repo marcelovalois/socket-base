@@ -1,4 +1,5 @@
 import { Server as SocketIOServer, Socket } from 'socket.io';
+import myCache from '../services/cache';
 
 class SocketManager {
 
@@ -19,6 +20,9 @@ class SocketManager {
             });
 
             socket.on('disconnect', () => {
+                let users: UserData[] = myCache.get('users') || [];
+                users = users.filter(user => user.id !== socket.id);
+                myCache.set('users', users);
                 socket.broadcast.emit('removeContactFromClient', socket.id);
             });
         });
