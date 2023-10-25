@@ -1,11 +1,8 @@
 import express from "express";
-import {
-  notFoundMiddleware,
-  errorHandlerMiddleware,
-} from "./middlewares/errorMiddlewares";
+import { notFoundMiddleware, errorHandlerMiddleware } from "./middlewares/errorMiddlewares";
 import cors from "cors";
 import morgan from "morgan";
-import routes from "./routes/routes";
+import routes from "./routes";
 
 const app = express();
 
