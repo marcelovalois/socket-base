@@ -5,6 +5,29 @@ import { prismaClient } from "../../databases/prismaClient";
 
 export class PrismaUsersRepository implements IUsersRepository {
   constructor() {}
+
+  async findById(id: number): Promise<User | null> {
+    try {
+      const result = await prismaClient.user.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (result) {
+        return new User({
+          name: result.name,
+          image: result.image,
+          type: result.type,
+        });
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    }
+  }
+
   async findByName(username: string): Promise<User | null> {
     try {
       const result = await prismaClient.user.findFirst({
@@ -50,5 +73,9 @@ export class PrismaUsersRepository implements IUsersRepository {
     } catch (error) {
       throw new Error(`Error: ${error}`);
     }
+  }
+
+  remove(user: User): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 }
