@@ -50,7 +50,7 @@ export class PrismaUsersRepository implements IUsersRepository {
     }
   }
 
-  async save(user: User): Promise<void> {
+  async save(user: User): Promise<User> {
     const { name, image, type } = user;
     try {
       const savedUser = await prismaClient.user.create({
@@ -60,6 +60,8 @@ export class PrismaUsersRepository implements IUsersRepository {
           type,
         },
       });
+
+      return savedUser;
     } catch (error) {
       throw new Error(`Error: ${error}`);
     }
@@ -75,7 +77,25 @@ export class PrismaUsersRepository implements IUsersRepository {
     }
   }
 
-  remove(user: User): Promise<void> {
-    throw new Error("Method not implemented.");
+  async remove(id: number): Promise<User> {
+    try {
+      const user = await prismaClient.user.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!user) throw new Error("Usuário não encontrado");
+
+      const result: User = await prismaClient.user.delete({
+        where: {
+          id: user.id,
+        },
+      });
+
+      return result;
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    }
   }
 }
