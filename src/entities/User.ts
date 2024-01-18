@@ -1,8 +1,8 @@
 export class User {
-  public name: string = "";
-  public image?: string | null = "";
-  public type?: string | null = "";
   public id?: number;
+  public name: string = "";
+  public type?: string | null = "";
+  public image?: string | null = "";
 
   constructor(props: Omit<User, "id">, id?: number) {
     Object.assign(this, props);

@@ -1,26 +1,23 @@
-import { User } from "../../../entities/User";
-import { IUsersRepository } from "../../../repositories/IUsersRepository";
+import { IExecutionsRepository } from "../../../repositories/interfaces/IExecutionsRepository";
 
 interface ISendExecutionRequest {
-  name: string;
-  image: string;
-  type: string;
+  user_id: number;
+  message: string;
+  activity_id: number;
+  pontuando_quote: boolean;
 }
 
 export class SendExecutionUseCase {
-  constructor(private usersRepository: IUsersRepository) {}
+  constructor(private executionsRepository: IExecutionsRepository) {}
 
-  async execute(data: ISendExecutionRequest) {
-    const userExists = await this.usersRepository.findByName(data.name);
+  async execute({ user_id, activity_id, message, pontuando_quote }: ISendExecutionRequest) {
+    const executionId = this.executionsRepository.createExecution({
+      user_id,
+      activity_id,
+      message,
+      pontuando_quote,
+    });
 
-    if (userExists) {
-      throw new Error(`User ${data.name} already exists`);
-    }
-
-    const user = new User(data);
-
-    const userData = await this.usersRepository.save(user);
-
-    return userData;
+    return executionId;
   }
 }

@@ -1,5 +1,5 @@
 import { User } from "../../entities/User";
-import { IUsersRepository } from "../IUsersRepository";
+import { IUsersRepository } from "../interfaces/IUsersRepository";
 import { prismaClient } from "../../databases/prismaClient";
 
 export class PrismaUsersRepository implements IUsersRepository {
@@ -26,6 +26,8 @@ export class PrismaUsersRepository implements IUsersRepository {
       }
     } catch (error) {
       throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
     }
   }
 
@@ -50,6 +52,8 @@ export class PrismaUsersRepository implements IUsersRepository {
       }
     } catch (error) {
       throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
     }
   }
 
@@ -68,6 +72,8 @@ export class PrismaUsersRepository implements IUsersRepository {
       return savedUser;
     } catch (error) {
       throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
     }
   }
 
@@ -79,6 +85,8 @@ export class PrismaUsersRepository implements IUsersRepository {
       return result;
     } catch (error) {
       throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
     }
   }
 
@@ -104,6 +112,8 @@ export class PrismaUsersRepository implements IUsersRepository {
       return result;
     } catch (error) {
       throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
     }
   }
 }

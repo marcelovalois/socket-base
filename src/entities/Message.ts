@@ -1,8 +1,8 @@
 export class Message {
-  public text!: string;
-  public user_id!: number;
   public id?: number;
-  public pontuandoQuote?: boolean;
+  public user_id!: number;
+  public text: string = "";
+  public pontuando_quote: boolean = false;
 
   constructor(props: Omit<Message, "id">, id?: number) {
     Object.assign(this, props);

@@ -20,7 +20,7 @@ model User {
   Execution  Execution[]
 
   created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
+  updated_at DateTime    @updatedAt @default(now())
   deleted_at DateTime?
 
   @@map("users")
@@ -36,7 +36,7 @@ model Activity {
   Execution  Execution[]
 
   created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
+  updated_at DateTime    @updatedAt @default(now())
   deleted_at DateTime?
 
   @@map("activities")
@@ -48,10 +48,10 @@ model Message {
   pontuando_quote Boolean
   user_id         Int
   user            User    @relation(fields: [user_id], references: [id])
-  Execution  Execution[]
+  executions      Execution[]
 
   created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
+  updated_at DateTime    @updatedAt @default(now())
   deleted_at DateTime?
 
   @@map("messages")
@@ -65,7 +65,7 @@ model Phrase {
   activity    Activity @relation(fields: [activity_id], references: [id])
 
   created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  updated_at DateTime  @updatedAt @default(now())
   deleted_at DateTime?
 
   @@unique([order, activity_id, text])
@@ -82,7 +82,7 @@ model Execution {
   message     Message  @relation(fields: [message_id], references: [id])
 
   created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  updated_at DateTime  @updatedAt @default(now())
   deleted_at DateTime?
 
   @@unique([activity_id, user_id, message_id])

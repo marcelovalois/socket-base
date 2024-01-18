@@ -1,4 +1,4 @@
-import { IUsersRepository } from "../../../repositories/IUsersRepository";
+import { IUsersRepository } from "../../../repositories/interfaces/IUsersRepository";
 
 export class RemoveUserUseCase {
   constructor(private usersRepository: IUsersRepository) {}

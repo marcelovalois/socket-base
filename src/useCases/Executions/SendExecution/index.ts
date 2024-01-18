@@ -1,11 +1,11 @@
-import { PrismaUsersRepository } from "../../../repositories/implementations/PrismaUsersRepository";
-import { CreateUserUseCase } from "./SendExecutionUseCase";
-import { CreateUserController } from "./CreateUserController";
+import { PrismaExecutionsRepository } from "../../../repositories/implementations/PrismaExecutionsRepository";
+import { SendExecutionUseCase } from "./SendExecutionUseCase";
+import { SendExecutionController } from "./SendExecutionController";
 
-const prismaUsersRepository = new PrismaUsersRepository();
+const prismaExecutionsRepository = new PrismaExecutionsRepository();
 
-const createUserUseCase = new CreateUserUseCase(prismaUsersRepository);
+const sendExecutionUseCase = new SendExecutionUseCase(prismaExecutionsRepository);
 
-const createUserController = new CreateUserController(createUserUseCase);
+const sendExecutionController = new SendExecutionController(sendExecutionUseCase);
 
-export { createUserUseCase, createUserController };
+export { sendExecutionUseCase, sendExecutionController };

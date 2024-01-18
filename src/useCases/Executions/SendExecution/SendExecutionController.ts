@@ -4,9 +4,10 @@ import { SendExecutionUseCase } from "./SendExecutionUseCase";
 import { z } from "zod";
 
 const sendExecutionSchema = z.object({
-  username: z.string(),
-  image: z.string(),
-  type: z.string(),
+  user_id: z.number(),
+  activity_id: z.number(),
+  message: z.string(),
+  pontuando_quote: z.boolean(),
 });
 
 export class SendExecutionController {
@@ -14,15 +15,11 @@ export class SendExecutionController {
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { username, image, type } = sendExecutionSchema.parse(req.body);
+      const { user_id, activity_id, message, pontuando_quote } = sendExecutionSchema.parse(req.body);
 
-      const userData = await this.sendExecutionUseCase.execute({
-        name: username,
-        image,
-        type,
-      });
+      const messageData = await this.sendExecutionUseCase.execute({ user_id, message, activity_id, pontuando_quote });
 
-      return res.status(200).json({ success: true, id: userData.id });
+      return res.status(200).json({ success: true, id: messageData });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.issues });

@@ -1,11 +1,10 @@
-import { User } from "../../../entities/User";
-import { IUsersRepository } from "../../../repositories/IUsersRepository";
+import { IUsersRepository } from "../../../repositories/interfaces/IUsersRepository";
 
 export class ListUserUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
   execute = async () => {
-    const users: User[] = await this.usersRepository.list();
+    const users = await this.usersRepository.list();
     return users;
   };
 }
