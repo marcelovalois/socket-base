@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { User } from "../../entities/User";
 import { IUsersRepository } from "../IUsersRepository";
 import { prismaClient } from "../../databases/prismaClient";
@@ -8,12 +7,14 @@ export class PrismaUsersRepository implements IUsersRepository {
 
   async findById(id: number): Promise<User | null> {
     try {
+      // Busca o usuário pelo id
       const result = await prismaClient.user.findUnique({
         where: {
           id,
         },
       });
 
+      // Se o usuário existir, retorna o usuário
       if (result) {
         return new User({
           name: result.name,
@@ -30,12 +31,14 @@ export class PrismaUsersRepository implements IUsersRepository {
 
   async findByName(username: string): Promise<User | null> {
     try {
+      // Busca o usuário pelo nome
       const result = await prismaClient.user.findFirst({
         where: {
           name: username,
         },
       });
 
+      // Se o usuário existir, retorna o usuário
       if (result) {
         return new User({
           name: result.name,
@@ -53,6 +56,7 @@ export class PrismaUsersRepository implements IUsersRepository {
   async save(user: User): Promise<User> {
     const { name, image, type } = user;
     try {
+      // Salva o usuário
       const savedUser = await prismaClient.user.create({
         data: {
           name,
@@ -69,6 +73,7 @@ export class PrismaUsersRepository implements IUsersRepository {
 
   async list(): Promise<User[]> {
     try {
+      // Lista todos os usuários
       const result: User[] = await prismaClient.user.findMany();
 
       return result;
@@ -79,6 +84,7 @@ export class PrismaUsersRepository implements IUsersRepository {
 
   async remove(id: number): Promise<User> {
     try {
+      // Checa se o usuário existe
       const user = await prismaClient.user.findUnique({
         where: {
           id,
@@ -87,12 +93,14 @@ export class PrismaUsersRepository implements IUsersRepository {
 
       if (!user) throw new Error("Usuário não encontrado");
 
+      // Deleta o usuário
       const result: User = await prismaClient.user.delete({
         where: {
           id: user.id,
         },
       });
 
+      // Retorna o usuário deletado
       return result;
     } catch (error) {
       throw new Error(`Error: ${error}`);
