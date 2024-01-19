@@ -5,6 +5,13 @@ import { z } from "zod";
 const createActivitySchema = z.object({
   title: z.string(),
   user_id: z.number(),
+  phrases: z
+    .object({
+      text: z.string(),
+      order: z.number(),
+    })
+    .array()
+    .optional(),
 });
 
 export class CreateActivityController {
@@ -12,11 +19,11 @@ export class CreateActivityController {
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { title, user_id } = createActivitySchema.parse(req.body);
+      const { title, user_id, phrases } = createActivitySchema.parse(req.body);
 
-      const activityId = await this.createActivityUseCase.execute({ title, user_id });
+      const activity = await this.createActivityUseCase.execute({ title, user_id, phrases });
 
-      return res.status(200).json({ success: true, id: activityId });
+      return res.status(200).json({ success: true, data: activity });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.issues });

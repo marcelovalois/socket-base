@@ -11,6 +11,9 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
         where: {
           id,
         },
+        include: {
+          phrases: true,
+        },
       });
 
       if (activity) {
@@ -53,16 +56,27 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
     }
   }
 
-  async createActivity(activity: Activity): Promise<number> {
+  async createActivity(activity: Activity): Promise<Activity> {
     try {
-      const result = await prismaClient.activity.create({
-        data: {
-          title: activity.title,
-          user_id: activity.user_id,
-        },
-      });
+      const createPayload = {
+        title: activity.title!,
+        user_id: activity.user_id!,
+      };
 
-      return result.id;
+      if (activity.phrases && activity.phrases.length > 0) {
+        Object.assign(createPayload, {
+          phrases: {
+            create: activity.phrases.map((phrase) => ({
+              text: phrase.text,
+              order: phrase.order,
+            })),
+          },
+        });
+      }
+
+      const result = await prismaClient.activity.create({ data: createPayload, include: { phrases: true } });
+
+      return result;
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
@@ -105,11 +119,17 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
 
   async deleteActivity(id: number): Promise<void> {
     try {
-      await prismaClient.activity.delete({
-        where: {
-          id,
-        },
-      });
+      await prismaClient.$transaction([
+        prismaClient.phrase.deleteMany({
+          where: { activity_id: id },
+        }),
+        prismaClient.participation.deleteMany({
+          where: { activity_id: id },
+        }),
+        prismaClient.activity.delete({
+          where: { id },
+        }),
+      ]);
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
