@@ -121,9 +121,54 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
 
   async listAll(): Promise<Activity[]> {
     try {
-      const activities: Activity[] = await prismaClient.activity.findMany();
+      const activities = await prismaClient.activity.findMany({
+        select: {
+          id: true,
+          title: true,
+          link: true,
+          user_id: true,
+          phrases: {
+            select: {
+              id: true,
+              text: true,
+              order: true,
+            },
+          },
+          participations: {
+            select: {
+              id: false,
+              user_id: true,
+              user: {
+                select: {
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
 
-      return activities;
+          created_at: false,
+          updated_at: false,
+          deleted_at: false,
+        },
+      });
+
+      return activities.map((activity) => {
+        return new Activity(
+          {
+            title: activity.title,
+            link: activity.link,
+            user_id: activity.user_id,
+            phrases: activity.phrases,
+            members: activity.participations.map((participation) => ({
+              user_id: participation.user_id,
+              user_name: participation.user.name,
+              user_type: participation.user.type,
+            })),
+          },
+          activity.id,
+        );
+      });
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
@@ -133,13 +178,57 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
 
   async listByCreator(id: number): Promise<Activity[]> {
     try {
-      const activities: Activity[] = await prismaClient.activity.findMany({
+      const activities = await prismaClient.activity.findMany({
         where: {
           user_id: id,
         },
+        select: {
+          id: true,
+          title: true,
+          link: true,
+          user_id: true,
+          phrases: {
+            select: {
+              id: true,
+              text: true,
+              order: true,
+            },
+          },
+          participations: {
+            select: {
+              id: false,
+              user_id: true,
+              user: {
+                select: {
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
+
+          created_at: false,
+          updated_at: false,
+          deleted_at: false,
+        },
       });
 
-      return activities;
+      return activities.map((activity) => {
+        return new Activity(
+          {
+            title: activity.title,
+            link: activity.link,
+            user_id: activity.user_id,
+            phrases: activity.phrases,
+            members: activity.participations.map((participation) => ({
+              user_id: participation.user_id,
+              user_name: participation.user.name,
+              user_type: participation.user.type,
+            })),
+          },
+          activity.id,
+        );
+      });
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
@@ -162,8 +251,8 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
 
       await prismaClient.participation.create({
         data: {
-          user_id: participation.user_id,
-          activity_id: participation.activity_id,
+          user_id: participation.user_id!,
+          activity_id: participation.activity_id!,
         },
       });
     } catch (error) {
@@ -180,12 +269,13 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           activity_id: id,
         },
         select: {
-          id: true,
+          id: false,
           user_id: true,
           activity_id: true,
-          activity: {
+          user: {
             select: {
-              title: true,
+              name: true,
+              type: true,
             },
           },
 
@@ -195,18 +285,14 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
         },
       });
 
-      const parsedParticipations = participations.map((participation) => {
-        return new Participation(
-          {
-            user_id: participation.user_id,
-            activity_id: participation.activity_id,
-            activity_title: participation.activity.title,
-          },
-          participation.id,
-        );
+      return participations.map((participation) => {
+        return new Participation({
+          user_id: participation.user_id,
+          activity_id: participation.activity_id,
+          user_name: participation.user.name,
+          user_type: participation.user.type,
+        });
       });
-
-      return parsedParticipations;
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {

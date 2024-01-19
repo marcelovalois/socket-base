@@ -81,7 +81,18 @@ export class PrismaUsersRepository implements IUsersRepository {
   async listAll(): Promise<User[]> {
     try {
       // Lista todos os usuários
-      const result: User[] = await prismaClient.user.findMany();
+      const result = await prismaClient.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          type: true,
+
+          created_at: false,
+          updated_at: false,
+          deleted_at: false,
+        },
+      });
 
       return result;
     } catch (error) {
@@ -140,7 +151,7 @@ export class PrismaUsersRepository implements IUsersRepository {
         },
       });
 
-      const parsedParticipations = participations.map((participation) => {
+      return participations.map((participation) => {
         return new Participation(
           {
             user_id: participation.user_id,
@@ -150,8 +161,6 @@ export class PrismaUsersRepository implements IUsersRepository {
           participation.id,
         );
       });
-
-      return parsedParticipations;
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {

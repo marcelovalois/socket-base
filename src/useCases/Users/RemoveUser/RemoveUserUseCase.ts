@@ -4,7 +4,7 @@ export class RemoveUserUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
   execute = async (id: number) => {
-    const userData = await this.usersRepository.remove(id);
+    const userData = await this.usersRepository.removeUser(id);
 
     return userData;
   };

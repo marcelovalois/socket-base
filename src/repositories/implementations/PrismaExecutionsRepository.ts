@@ -11,17 +11,42 @@ export class PrismaExecutionsRepository implements IExecutionsRepository {
         where: {
           user_id: id,
         },
-        include: {
-          activity: true,
-          message: true,
+        select: {
+          id: true,
+          activity_id: true,
+          user_id: true,
+          message_id: true,
+          activity: {
+            select: {
+              title: true,
+            },
+          },
+          message: {
+            select: {
+              text: true,
+              pontuando_quote: true,
+            },
+          },
+
+          created_at: false,
+          updated_at: false,
+          deleted_at: false,
         },
       });
 
-      return executions.map((execution) => ({
-        ...execution,
-        pontuando_quote: execution.message.pontuando_quote,
-        message: execution.message.text,
-      }));
+      return executions.map((execution) => {
+        return new Execution(
+          {
+            user_id: execution.user_id,
+            activity_id: execution.activity_id,
+            activity_title: execution.activity.title,
+            message_id: execution.message_id,
+            message: execution.message.text,
+            pontuando_quote: execution.message.pontuando_quote,
+          },
+          execution.id,
+        );
+      });
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
@@ -34,17 +59,42 @@ export class PrismaExecutionsRepository implements IExecutionsRepository {
         where: {
           activity_id: id,
         },
-        include: {
-          activity: true,
-          message: true,
+        select: {
+          id: true,
+          activity_id: true,
+          user_id: true,
+          message_id: true,
+          activity: {
+            select: {
+              title: true,
+            },
+          },
+          message: {
+            select: {
+              text: true,
+              pontuando_quote: true,
+            },
+          },
+
+          created_at: false,
+          updated_at: false,
+          deleted_at: false,
         },
       });
 
-      return executions.map((execution) => ({
-        ...execution,
-        pontuando_quote: execution.message.pontuando_quote,
-        message: execution.message.text,
-      }));
+      return executions.map((execution) => {
+        return new Execution(
+          {
+            user_id: execution.user_id,
+            activity_id: execution.activity_id,
+            activity_title: execution.activity.title,
+            message_id: execution.message_id,
+            message: execution.message.text,
+            pontuando_quote: execution.message.pontuando_quote,
+          },
+          execution.id,
+        );
+      });
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {

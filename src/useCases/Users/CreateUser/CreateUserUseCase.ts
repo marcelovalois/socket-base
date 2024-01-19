@@ -19,7 +19,7 @@ export class CreateUserUseCase {
 
     const user = new User(data);
 
-    const userData = await this.usersRepository.save(user);
+    const userData = await this.usersRepository.insertUser(user);
 
     return userData;
   }

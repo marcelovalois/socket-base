@@ -4,7 +4,7 @@ export class ListUserUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
   execute = async () => {
-    const users = await this.usersRepository.list();
+    const users = await this.usersRepository.listAll();
     return users;
   };
 }

@@ -17,25 +17,29 @@ import { listActivitiesByCreatorIdController } from "./useCases/Activities/ListA
 import { deleteActivityController } from "./useCases/Activities/DeleteActivity";
 import { updateActivityController } from "./useCases/Activities/UpdateActivity";
 import { listUsersByActivityIdController } from "./useCases/Activities/ListUsersByActivityId";
+import { insertUserToActivityController } from "./useCases/Activities/InsertUserToActivity";
+import { removeUserFromActivityController } from "./useCases/Activities/RemoveUserFromActivity";
 
 const routes = Router();
 
-routes.post("/create_user", createUserController.handle);
 routes.get("/list_users", listUserController.handle);
 routes.get("/find_user/:id", findUserByIdController.handle);
-routes.delete("/remove_user/:id", removeUserController.handle);
 routes.get("/list_user_activities/:id", listUserActivitiesController.handle);
+routes.post("/create_user", createUserController.handle);
+routes.delete("/remove_user/:id", removeUserController.handle);
 
-routes.post("/send_message", sendExecutionController.handle);
 routes.get("/list_messages_by_user/:id", listExecutionsByUserController.handle);
 routes.get("/list_messages_by_activity/:id", listExecutionsByActivityController.handle);
+routes.post("/send_message", sendExecutionController.handle);
 
 routes.get("/list_activities", listActivitiesController.handle);
 routes.get("/list_activities_by_user/:id", listActivitiesByCreatorIdController.handle);
 routes.get("/find_activity/:id", findActivityByIdController.handle);
 routes.get("/list_activity_users/:id", listUsersByActivityIdController.handle);
 routes.post("/create_activity", createActivityController.handle);
+routes.post("/insert_user_to_activity", insertUserToActivityController.handle);
 routes.put("/update_activity/:id", updateActivityController.handle);
 routes.delete("/delete_activity/:id", deleteActivityController.handle);
+routes.delete("/remove_user_from_activity", removeUserFromActivityController.handle);
 
 export default routes;

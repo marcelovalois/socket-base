@@ -3,6 +3,7 @@ export class Execution {
   public user_id!: number;
   public message_id?: number;
   public activity_id!: number;
+  public activity_title: string = "";
   public message?: string = "";
   public pontuando_quote: boolean = false;
 
