@@ -1,61 +1,10 @@
 import { prismaClient } from "../../databases/prismaClient";
 import { Activity } from "../../entities/Activity";
+import { Participation } from "../../entities/Participation";
 import { IActivitiesRepository } from "../interfaces/IActivitiesRepository";
 
 export class PrismaActivitiesRepository implements IActivitiesRepository {
   constructor() {}
-
-  async findById(id: number): Promise<Activity | null> {
-    try {
-      const activity = await prismaClient.activity.findUnique({
-        where: {
-          id,
-        },
-        include: {
-          phrases: true,
-          participations: true,
-        },
-      });
-
-      if (activity) {
-        return new Activity({ ...activity });
-      } else {
-        return null;
-      }
-    } catch (error) {
-      throw new Error(`Error: ${error}`);
-    } finally {
-      await prismaClient.$disconnect();
-    }
-  }
-
-  async listAll(): Promise<Activity[]> {
-    try {
-      const activities: Activity[] = await prismaClient.activity.findMany();
-
-      return activities;
-    } catch (error) {
-      throw new Error(`Error: ${error}`);
-    } finally {
-      await prismaClient.$disconnect();
-    }
-  }
-
-  async listByUser(id: number): Promise<Activity[]> {
-    try {
-      const activities: Activity[] = await prismaClient.activity.findMany({
-        where: {
-          user_id: id,
-        },
-      });
-
-      return activities;
-    } catch (error) {
-      throw new Error(`Error: ${error}`);
-    } finally {
-      await prismaClient.$disconnect();
-    }
-  }
 
   async createActivity(activity: Activity): Promise<Activity> {
     try {
@@ -139,6 +88,150 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           where: { id },
         }),
       ]);
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async findById(id: number): Promise<Activity | null> {
+    try {
+      const activity = await prismaClient.activity.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          phrases: true,
+          participations: true,
+        },
+      });
+
+      if (activity) {
+        return new Activity({ ...activity });
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async listAll(): Promise<Activity[]> {
+    try {
+      const activities: Activity[] = await prismaClient.activity.findMany();
+
+      return activities;
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async listByCreator(id: number): Promise<Activity[]> {
+    try {
+      const activities: Activity[] = await prismaClient.activity.findMany({
+        where: {
+          user_id: id,
+        },
+      });
+
+      return activities;
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async addUserToActivity(participation: Participation): Promise<void> {
+    try {
+      const participationAlreadyExists = await prismaClient.participation.findFirst({
+        where: {
+          user_id: participation.user_id,
+          activity_id: participation.activity_id,
+        },
+      });
+
+      if (participationAlreadyExists) {
+        throw new Error("Participation already exists");
+      }
+
+      await prismaClient.participation.create({
+        data: {
+          user_id: participation.user_id,
+          activity_id: participation.activity_id,
+        },
+      });
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async listUsersByActivity(id: number): Promise<Participation[]> {
+    try {
+      const participations = await prismaClient.participation.findMany({
+        where: {
+          activity_id: id,
+        },
+        select: {
+          id: true,
+          user_id: true,
+          activity_id: true,
+          activity: {
+            select: {
+              title: true,
+            },
+          },
+
+          created_at: false,
+          updated_at: false,
+          deleted_at: false,
+        },
+      });
+
+      const parsedParticipations = participations.map((participation) => {
+        return new Participation(
+          {
+            user_id: participation.user_id,
+            activity_id: participation.activity_id,
+            activity_title: participation.activity.title,
+          },
+          participation.id,
+        );
+      });
+
+      return parsedParticipations;
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async removeUserFromActivity(participation: Participation): Promise<void> {
+    try {
+      const participationToDelete = await prismaClient.participation.findFirst({
+        where: {
+          user_id: participation.user_id,
+          activity_id: participation.activity_id,
+        },
+      });
+
+      if (!participationToDelete) {
+        throw new Error("Participation not found");
+      }
+
+      await prismaClient.participation.delete({
+        where: {
+          id: participationToDelete.id,
+        },
+      });
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {

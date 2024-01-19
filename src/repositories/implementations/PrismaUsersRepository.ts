@@ -1,4 +1,5 @@
 import { User } from "../../entities/User";
+import { Participation } from "../../entities/Participation";
 import { IUsersRepository } from "../interfaces/IUsersRepository";
 import { prismaClient } from "../../databases/prismaClient";
 
@@ -57,7 +58,7 @@ export class PrismaUsersRepository implements IUsersRepository {
     }
   }
 
-  async save(user: User): Promise<User> {
+  async insertUser(user: User): Promise<User> {
     const { name, image, type } = user;
     try {
       // Salva o usuário
@@ -77,7 +78,7 @@ export class PrismaUsersRepository implements IUsersRepository {
     }
   }
 
-  async list(): Promise<User[]> {
+  async listAll(): Promise<User[]> {
     try {
       // Lista todos os usuários
       const result: User[] = await prismaClient.user.findMany();
@@ -90,7 +91,7 @@ export class PrismaUsersRepository implements IUsersRepository {
     }
   }
 
-  async remove(id: number): Promise<User> {
+  async removeUser(id: number): Promise<User> {
     try {
       // Checa se o usuário existe
       const user = await prismaClient.user.findUnique({
@@ -110,6 +111,47 @@ export class PrismaUsersRepository implements IUsersRepository {
 
       // Retorna o usuário deletado
       return result;
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async listActivitiesByUser(id: number): Promise<Participation[]> {
+    try {
+      const participations = await prismaClient.participation.findMany({
+        where: {
+          user_id: id,
+        },
+        select: {
+          id: true,
+          user_id: true,
+          activity_id: true,
+          activity: {
+            select: {
+              title: true,
+            },
+          },
+
+          created_at: false,
+          updated_at: false,
+          deleted_at: false,
+        },
+      });
+
+      const parsedParticipations = participations.map((participation) => {
+        return new Participation(
+          {
+            user_id: participation.user_id,
+            activity_id: participation.activity_id,
+            activity_title: participation.activity.title,
+          },
+          participation.id,
+        );
+      });
+
+      return parsedParticipations;
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
