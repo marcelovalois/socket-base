@@ -16,6 +16,7 @@ import { findActivityByIdController } from "./useCases/Activities/FindActivityBy
 import { listActivitiesByCreatorIdController } from "./useCases/Activities/ListActivitiesByCreatorId";
 import { deleteActivityController } from "./useCases/Activities/DeleteActivity";
 import { updateActivityController } from "./useCases/Activities/UpdateActivity";
+import { listUsersByActivityIdController } from "./useCases/Activities/ListUsersByActivityId";
 
 const routes = Router();
 
@@ -29,11 +30,12 @@ routes.post("/send_message", sendExecutionController.handle);
 routes.get("/list_messages_by_user/:id", listExecutionsByUserController.handle);
 routes.get("/list_messages_by_activity/:id", listExecutionsByActivityController.handle);
 
-routes.post("/create_activity", createActivityController.handle);
 routes.get("/list_activities", listActivitiesController.handle);
 routes.get("/list_activities_by_user/:id", listActivitiesByCreatorIdController.handle);
 routes.get("/find_activity/:id", findActivityByIdController.handle);
-routes.delete("/delete_activity/:id", deleteActivityController.handle);
+routes.get("/list_activity_users/:id", listUsersByActivityIdController.handle);
+routes.post("/create_activity", createActivityController.handle);
 routes.put("/update_activity/:id", updateActivityController.handle);
+routes.delete("/delete_activity/:id", deleteActivityController.handle);
 
 export default routes;
