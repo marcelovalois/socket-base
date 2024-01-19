@@ -1,17 +1,17 @@
 import { Request, Response, NextFunction } from "express";
-import { ListActivitiesByUserIdUseCase } from "./ListActivitiesByUserIdUseCase";
+import { ListActivitiesByCreatorIdUseCase } from "./ListActivitiesByCreatorIdUseCase";
 import { z } from "zod";
 
-const listActivitiesByUserIdSchema = z.object({
+const listActivitiesByCreatorIdSchema = z.object({
   id: z.string().transform(Number),
 });
 
-export class ListActivitiesByUserIdController {
-  constructor(private listActivitiesByUserIdUseCase: ListActivitiesByUserIdUseCase) {}
+export class ListActivitiesByCreatorIdController {
+  constructor(private listActivitiesByUserIdUseCase: ListActivitiesByCreatorIdUseCase) {}
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = listActivitiesByUserIdSchema.parse(req.params);
+      const { id } = listActivitiesByCreatorIdSchema.parse(req.params);
 
       const activities = await this.listActivitiesByUserIdUseCase.execute(id);
 

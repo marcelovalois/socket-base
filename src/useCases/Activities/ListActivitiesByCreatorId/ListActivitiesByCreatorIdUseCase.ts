@@ -1,10 +1,10 @@
 import { IActivitiesRepository } from "../../../repositories/interfaces/IActivitiesRepository";
 
-export class ListActivitiesByUserIdUseCase {
+export class ListActivitiesByCreatorIdUseCase {
   constructor(private activitiesRepository: IActivitiesRepository) {}
 
   async execute(user_id: number) {
-    const activities = await this.activitiesRepository.listByUser(user_id);
+    const activities = await this.activitiesRepository.listByCreator(user_id);
 
     return activities;
   }

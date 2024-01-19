@@ -13,7 +13,7 @@ import { listExecutionsByActivityController } from "./useCases/Executions/ListEx
 import { createActivityController } from "./useCases/Activities/CreateActivity";
 import { listActivitiesController } from "./useCases/Activities/ListActivities";
 import { findActivityByIdController } from "./useCases/Activities/FindActivityById";
-import { listActivitiesByUserIdController } from "./useCases/Activities/ListActivitiesByUserId";
+import { listActivitiesByCreatorIdController } from "./useCases/Activities/ListActivitiesByCreatorId";
 import { deleteActivityController } from "./useCases/Activities/DeleteActivity";
 import { updateActivityController } from "./useCases/Activities/UpdateActivity";
 
@@ -31,7 +31,7 @@ routes.get("/list_messages_by_activity/:id", listExecutionsByActivityController.
 
 routes.post("/create_activity", createActivityController.handle);
 routes.get("/list_activities", listActivitiesController.handle);
-routes.get("/list_activities_by_user/:id", listActivitiesByUserIdController.handle);
+routes.get("/list_activities_by_user/:id", listActivitiesByCreatorIdController.handle);
 routes.get("/find_activity/:id", findActivityByIdController.handle);
 routes.delete("/delete_activity/:id", deleteActivityController.handle);
 routes.put("/update_activity/:id", updateActivityController.handle);
