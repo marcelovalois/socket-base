@@ -14,6 +14,7 @@ import { listActivitiesController } from "./useCases/Activities/ListActivities";
 import { findActivityByIdController } from "./useCases/Activities/FindActivityById";
 import { listActivitiesByUserIdController } from "./useCases/Activities/ListActivitiesByUserId";
 import { deleteActivityController } from "./useCases/Activities/DeleteActivity";
+import { updateActivityController } from "./useCases/Activities/UpdateActivity";
 
 const routes = Router();
 
@@ -31,5 +32,6 @@ routes.get("/list_activities", listActivitiesController.handle);
 routes.get("/list_activities_by_user/:id", listActivitiesByUserIdController.handle);
 routes.get("/find_activity/:id", findActivityByIdController.handle);
 routes.delete("/delete_activity/:id", deleteActivityController.handle);
+routes.put("/update_activity/:id", updateActivityController.handle);
 
 export default routes;

@@ -72,14 +72,29 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
 
   async updateActivity(activity: Activity): Promise<void> {
     try {
-      // TODO: Implementar o update com frases
+      const updatePayload = {};
+
+      if (activity.title) {
+        Object.assign(updatePayload, { title: activity.title });
+      }
+
+      if (activity.phrases) {
+        Object.assign(updatePayload, {
+          phrases: {
+            deleteMany: [{ activity_id: activity.id }],
+            create: activity.phrases.map((phrase) => ({
+              text: phrase.text,
+              order: phrase.order,
+            })),
+          },
+        });
+      }
+
       await prismaClient.activity.update({
         where: {
           id: activity.id,
         },
-        data: {
-          title: activity.title,
-        },
+        data: updatePayload,
       });
     } catch (error) {
       throw new Error(`Error: ${error}`);

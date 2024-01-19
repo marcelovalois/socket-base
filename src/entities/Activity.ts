@@ -3,8 +3,8 @@ import { Phrase } from "./Phrase";
 
 export class Activity {
   public id?: number;
-  public user_id!: number;
-  public title: string = "";
+  public user_id?: number;
+  public title?: string = "";
   public link?: string | null;
   public phrases?: Phrase[] | [];
   public executions?: Execution[] | [];
