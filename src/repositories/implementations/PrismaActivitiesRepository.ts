@@ -13,6 +13,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
         },
         include: {
           phrases: true,
+          participations: true,
         },
       });
 
@@ -61,6 +62,11 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
       const createPayload = {
         title: activity.title!,
         user_id: activity.user_id!,
+        participations: {
+          create: {
+            user_id: activity.user_id!,
+          },
+        },
       };
 
       if (activity.phrases && activity.phrases.length > 0) {
@@ -74,7 +80,10 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
         });
       }
 
-      const result = await prismaClient.activity.create({ data: createPayload, include: { phrases: true } });
+      const result = await prismaClient.activity.create({
+        data: createPayload,
+        include: { phrases: true, participations: true },
+      });
 
       return result;
     } catch (error) {
