@@ -3,7 +3,7 @@ import { ListExecutionsByUserUseCase } from "./ListExecutionsByUserUseCase";
 import { z } from "zod";
 
 const listExecutionsByUserSchema = z.object({
-  id: z.string(),
+  id: z.string().transform(Number),
 });
 
 export class ListExecutionsByUserController {
@@ -12,9 +12,8 @@ export class ListExecutionsByUserController {
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = listExecutionsByUserSchema.parse(req.params);
-      const parsedId = Number(id);
 
-      const executions = await this.listExecutionsByUserUseCase.execute({ user_id: parsedId });
+      const executions = await this.listExecutionsByUserUseCase.execute(id);
 
       return res.status(200).json({ success: true, executions });
     } catch (error) {

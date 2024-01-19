@@ -3,7 +3,7 @@ import { DeleteActivityUseCase } from "./DeleteActivityUseCase";
 import { z } from "zod";
 
 const deleteActivitySchema = z.object({
-  id: z.string(),
+  id: z.string().transform(Number),
 });
 
 export class DeleteActivityController {
@@ -12,9 +12,8 @@ export class DeleteActivityController {
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = deleteActivitySchema.parse(req.params);
-      const parsedId = Number(id);
 
-      await this.deleteActivityUseCase.execute({ id: parsedId });
+      await this.deleteActivityUseCase.execute(id);
 
       return res.status(200).json({ success: true });
     } catch (error) {

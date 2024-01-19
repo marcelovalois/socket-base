@@ -4,7 +4,7 @@ import { RemoveUserUseCase } from "./RemoveUserUseCase";
 import { z } from "zod";
 
 const removeUserSchema = z.object({
-  id: z.string(),
+  id: z.string().transform(Number),
 });
 
 export class RemoveUserController {
@@ -13,9 +13,8 @@ export class RemoveUserController {
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = removeUserSchema.parse(req.params);
-      const parsedId = Number(id);
 
-      const userData = await this.removeUserUseCase.execute(parsedId);
+      const userData = await this.removeUserUseCase.execute(id);
 
       return res.status(200).json({ success: true, id: userData.id });
     } catch (error) {

@@ -4,7 +4,7 @@ import { FindUserByIdUseCase } from "./FindUserByIdUseCase";
 import { z } from "zod";
 
 const findUserByIdSchema = z.object({
-  id: z.string(),
+  id: z.string().transform(Number),
 });
 
 export class FindUserByIdController {
@@ -13,9 +13,8 @@ export class FindUserByIdController {
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = findUserByIdSchema.parse(req.params);
-      const parsedId = Number(id);
 
-      const user = await this.findUserByIdUseCase.execute({ id: parsedId });
+      const user = await this.findUserByIdUseCase.execute(id);
 
       return res.status(200).json({ success: true, user });
     } catch (error) {

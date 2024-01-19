@@ -3,7 +3,7 @@ import { ListActivitiesByUserIdUseCase } from "./ListActivitiesByUserIdUseCase";
 import { z } from "zod";
 
 const listActivitiesByUserIdSchema = z.object({
-  id: z.string(),
+  id: z.string().transform(Number),
 });
 
 export class ListActivitiesByUserIdController {
@@ -12,9 +12,8 @@ export class ListActivitiesByUserIdController {
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = listActivitiesByUserIdSchema.parse(req.params);
-      const parsedId = Number(id);
 
-      const activities = await this.listActivitiesByUserIdUseCase.execute({ user_id: parsedId });
+      const activities = await this.listActivitiesByUserIdUseCase.execute(id);
 
       return res.status(200).json({ success: true, activities });
     } catch (error) {

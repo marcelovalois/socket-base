@@ -3,7 +3,7 @@ import { FindActivityByIdUseCase } from "./FindActivityByIdUseCase";
 import { z } from "zod";
 
 const findActivityByIdSchema = z.object({
-  id: z.string(),
+  id: z.string().transform(Number),
 });
 
 export class FindActivityByIdController {
@@ -12,9 +12,8 @@ export class FindActivityByIdController {
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = findActivityByIdSchema.parse(req.params);
-      const parsedId = Number(id);
 
-      const activity = await this.findActivityByIdUseCase.execute({ id: parsedId });
+      const activity = await this.findActivityByIdUseCase.execute(id);
 
       return res.status(200).json({ success: true, activity });
     } catch (error) {
