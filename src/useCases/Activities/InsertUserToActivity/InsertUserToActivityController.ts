@@ -19,7 +19,7 @@ export class InsertUserToActivityController {
         user_id,
       });
 
-      return res.status(200).json({ success: true });
+      return res.status(201).json({ success: true });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ success: false, error });

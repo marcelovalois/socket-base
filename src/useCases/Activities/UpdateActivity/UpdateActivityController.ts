@@ -44,7 +44,7 @@ export class UpdateActivityController {
         phrases: parsedPhrases,
       });
 
-      return res.status(200).json({ success: true });
+      return res.status(204).json({ success: true });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.issues });

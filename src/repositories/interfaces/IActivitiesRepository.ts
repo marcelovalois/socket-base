@@ -9,6 +9,7 @@ export interface IActivitiesRepository {
   updateActivity(activity: Activity): Promise<void>;
   deleteActivity(id: number): Promise<void>;
   addUserToActivity(participation: Participation): Promise<void>;
+  addUserWithLinkToActivity(participation: Participation): Promise<void>;
   removeUserFromActivity(participation: Participation): Promise<void>;
   listUsersByActivity(id: number): Promise<Participation[]>;
 }

@@ -19,6 +19,7 @@ import { updateActivityController } from "./useCases/Activities/UpdateActivity";
 import { listUsersByActivityIdController } from "./useCases/Activities/ListUsersByActivityId";
 import { insertUserToActivityController } from "./useCases/Activities/InsertUserToActivity";
 import { removeUserFromActivityController } from "./useCases/Activities/RemoveUserFromActivity";
+import { insertUserWithLinkController } from "./useCases/Activities/InsertUserWithLink";
 
 const routes = Router();
 
@@ -38,6 +39,7 @@ routes.get("/find_activity/:id", findActivityByIdController.handle);
 routes.get("/list_activity_users/:id", listUsersByActivityIdController.handle);
 routes.post("/create_activity", createActivityController.handle);
 routes.post("/insert_user_to_activity", insertUserToActivityController.handle);
+routes.post("/join_with_link", insertUserWithLinkController.handle);
 routes.put("/update_activity/:id", updateActivityController.handle);
 routes.delete("/delete_activity/:id", deleteActivityController.handle);
 routes.delete("/remove_user_from_activity", removeUserFromActivityController.handle);

@@ -19,7 +19,7 @@ export class SendExecutionController {
 
       const messageData = await this.sendExecutionUseCase.execute({ user_id, message, activity_id, pontuando_quote });
 
-      return res.status(200).json({ success: true, id: messageData });
+      return res.status(201).json({ success: true, id: messageData });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.issues });

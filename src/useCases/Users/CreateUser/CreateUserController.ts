@@ -22,7 +22,7 @@ export class CreateUserController {
         type,
       });
 
-      return res.status(200).json({ success: true, id: userData.id });
+      return res.status(201).json({ success: true, id: userData.id });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.issues });

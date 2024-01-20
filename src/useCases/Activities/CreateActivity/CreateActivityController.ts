@@ -23,7 +23,7 @@ export class CreateActivityController {
 
       const activity = await this.createActivityUseCase.execute({ title, user_id, phrases });
 
-      return res.status(200).json({ success: true, data: activity });
+      return res.status(201).json({ success: true, data: activity });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.issues });

@@ -236,6 +236,38 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
     }
   }
 
+  async addUserWithLinkToActivity(participation: Participation): Promise<void> {
+    try {
+      const activity = await prismaClient.activity.findFirst({
+        where: {
+          link: participation.link,
+        },
+      });
+
+      if (!activity) throw new Error("Activity not found");
+
+      const participationAlreadyExists = await prismaClient.participation.findFirst({
+        where: {
+          user_id: participation.user_id,
+          activity_id: activity.id,
+        },
+      });
+
+      if (participationAlreadyExists) throw new Error("User already in activity.");
+
+      await prismaClient.participation.create({
+        data: {
+          user_id: participation.user_id!,
+          activity_id: activity.id,
+        },
+      });
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
   async addUserToActivity(participation: Participation): Promise<void> {
     try {
       const participationAlreadyExists = await prismaClient.participation.findFirst({
@@ -245,9 +277,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
         },
       });
 
-      if (participationAlreadyExists) {
-        throw new Error("Participation already exists");
-      }
+      if (participationAlreadyExists) throw new Error("User already in activity.");
 
       await prismaClient.participation.create({
         data: {
@@ -309,9 +339,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
         },
       });
 
-      if (!participationToDelete) {
-        throw new Error("Participation not found");
-      }
+      if (!participationToDelete) throw new Error("User is not in activity.");
 
       await prismaClient.participation.delete({
         where: {
