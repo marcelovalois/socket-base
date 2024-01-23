@@ -3,7 +3,7 @@ import { UpdateUserUseCase } from "./UpdateUserUseCase";
 import { z } from "zod";
 
 const updateUserSchema = z.object({
-  username: z.string().optional(),
+  name: z.string().optional(),
   email: z.string().email().optional(),
   image: z.string().optional(),
   type: z.string().optional(),
@@ -19,11 +19,11 @@ export class UpdateUserController {
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = userIdSchema.parse(req.params);
-      const { username, email, image, type } = updateUserSchema.parse(req.body);
+      const { name, email, image, type } = updateUserSchema.parse(req.body);
 
       await this.updateUserUseCase.execute({
         id,
-        name: username,
+        name,
         email,
         image,
         type,

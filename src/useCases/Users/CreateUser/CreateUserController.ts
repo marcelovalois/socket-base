@@ -4,7 +4,7 @@ import { CreateUserUseCase } from "./CreateUserUseCase";
 import { z } from "zod";
 
 const createUserSchema = z.object({
-  username: z.string(),
+  name: z.string(),
   email: z.string().email(),
   image: z.string(),
   type: z.string(),
@@ -15,10 +15,10 @@ export class CreateUserController {
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { username, email, image, type } = createUserSchema.parse(req.body);
+      const { name, email, image, type } = createUserSchema.parse(req.body);
 
       const userData = await this.createUserUseCase.execute({
-        name: username,
+        name,
         email,
         image,
         type,
