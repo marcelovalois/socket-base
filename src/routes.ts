@@ -3,8 +3,10 @@ import { Router } from "express";
 import { createUserController } from "./useCases/Users/CreateUser";
 import { listUserController } from "./useCases/Users/ListUsers";
 import { findUserByIdController } from "./useCases/Users/FindUserById";
+import { findUserByEmailController } from "./useCases/Users/FindUserByEmail";
 import { removeUserController } from "./useCases/Users/RemoveUser";
 import { listUserActivitiesController } from "./useCases/Users/ListUserActivities";
+import { updateUserController } from "./useCases/Users/UpdateUser";
 
 import { sendExecutionController } from "./useCases/Executions/SendExecution";
 import { listExecutionsByUserController } from "./useCases/Executions/ListExecutionsByUser";
@@ -26,6 +28,8 @@ const routes = Router();
 routes.get("/list_users", listUserController.handle);
 routes.get("/find_user/:id", findUserByIdController.handle);
 routes.get("/list_user_activities/:id", listUserActivitiesController.handle);
+routes.put("/update_user/:id", updateUserController.handle);
+routes.post("/find_user_by_email", findUserByEmailController.handle);
 routes.post("/create_user", createUserController.handle);
 routes.delete("/remove_user/:id", removeUserController.handle);
 
@@ -37,10 +41,10 @@ routes.get("/list_activities", listActivitiesController.handle);
 routes.get("/list_activities_by_user/:id", listActivitiesByCreatorIdController.handle);
 routes.get("/find_activity/:id", findActivityByIdController.handle);
 routes.get("/list_activity_users/:id", listUsersByActivityIdController.handle);
+routes.put("/update_activity/:id", updateActivityController.handle);
 routes.post("/create_activity", createActivityController.handle);
 routes.post("/insert_user_to_activity", insertUserToActivityController.handle);
 routes.post("/join_with_link", insertUserWithLinkController.handle);
-routes.put("/update_activity/:id", updateActivityController.handle);
 routes.delete("/delete_activity/:id", deleteActivityController.handle);
 routes.delete("/remove_user_from_activity", removeUserFromActivityController.handle);
 

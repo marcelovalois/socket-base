@@ -8,4 +8,4 @@ const findUserByIdUseCase = new FindUserByIdUseCase(prismaUsersRepository);
 
 const findUserByIdController = new FindUserByIdController(findUserByIdUseCase);
 
-export { findUserByIdController };
+export { findUserByIdController, findUserByIdUseCase };

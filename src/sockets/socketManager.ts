@@ -1,4 +1,5 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
+import { findUserByIdUseCase } from "../useCases/Users/FindUserById";
 
 class SocketManager {
   constructor(private io: SocketIOServer) {
@@ -6,7 +7,20 @@ class SocketManager {
   }
 
   private handleSocketConnection(): void {
-    this.io.on("connection", (socket: Socket) => {
+    this.io.on("connection", async (socket: Socket) => {
+      const id = socket.handshake.query.id;
+      const parsedId = Number(id);
+
+      const user = await findUserByIdUseCase.execute(parsedId);
+      console.log(user);
+
+      if (user) {
+        socket.join(user.id?.toString() || "");
+        console.log(`User ${user.id} connected to socket id ${socket.id}`);
+      } else {
+        socket.disconnect();
+      }
+
       socket.emit("getId", socket.id);
 
       socket.on("sendMessageToServer", async (data: PontuandoMessage) => {

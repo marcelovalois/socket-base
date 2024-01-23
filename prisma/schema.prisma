@@ -15,6 +15,7 @@ model User {
   name           String
   image          String?
   type           String?
+  email          String          @unique
   activities     Activity[]
   messages       Message[]
   executions     Execution[]

@@ -17,11 +17,15 @@ export class PrismaUsersRepository implements IUsersRepository {
 
       // Se o usuário existir, retorna o usuário
       if (result) {
-        return new User({
-          name: result.name,
-          image: result.image,
-          type: result.type,
-        });
+        return new User(
+          {
+            name: result.name,
+            image: result.image,
+            type: result.type,
+            email: result.email,
+          },
+          result.id,
+        );
       } else {
         return null;
       }
@@ -32,21 +36,22 @@ export class PrismaUsersRepository implements IUsersRepository {
     }
   }
 
-  async findByName(username: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<User | null> {
     try {
       // Busca o usuário pelo nome
-      const result = await prismaClient.user.findFirst({
+      const user = await prismaClient.user.findFirst({
         where: {
-          name: username,
+          email,
         },
       });
 
       // Se o usuário existir, retorna o usuário
-      if (result) {
+      if (user) {
         return new User({
-          name: result.name,
-          image: result.image,
-          type: result.type,
+          name: user.name,
+          image: user.image,
+          type: user.type,
+          email: user.email,
         });
       } else {
         return null;
@@ -59,14 +64,15 @@ export class PrismaUsersRepository implements IUsersRepository {
   }
 
   async insertUser(user: User): Promise<User> {
-    const { name, image, type } = user;
+    const { name, email, image, type } = user;
     try {
       // Salva o usuário
       const savedUser = await prismaClient.user.create({
         data: {
-          name,
+          name: name!,
           image,
           type,
+          email: email!,
         },
       });
 
@@ -85,6 +91,7 @@ export class PrismaUsersRepository implements IUsersRepository {
         select: {
           id: true,
           name: true,
+          email: true,
           image: true,
           type: true,
 
@@ -95,6 +102,38 @@ export class PrismaUsersRepository implements IUsersRepository {
       });
 
       return result;
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async updateUser(user: User): Promise<void> {
+    try {
+      // Checa se o usuário existe
+      const userExists = await prismaClient.user.findUnique({
+        where: {
+          id: user.id,
+        },
+      });
+
+      if (!userExists) throw new Error("Usuário não encontrado");
+
+      const updatePayload = {};
+
+      if (user.name) Object.assign(updatePayload, { name: user.name });
+      if (user.email) Object.assign(updatePayload, { email: user.email });
+      if (user.image) Object.assign(updatePayload, { image: user.image });
+      if (user.type) Object.assign(updatePayload, { type: user.type });
+
+      // Atualiza o usuário
+      await prismaClient.user.update({
+        where: {
+          id: user.id,
+        },
+        data: updatePayload,
+      });
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {

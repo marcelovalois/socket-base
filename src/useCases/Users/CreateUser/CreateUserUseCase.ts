@@ -3,6 +3,7 @@ import { IUsersRepository } from "../../../repositories/interfaces/IUsersReposit
 
 interface ICreateUserRequest {
   name: string;
+  email: string;
   image: string;
   type: string;
 }
@@ -11,7 +12,7 @@ export class CreateUserUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
   async execute(data: ICreateUserRequest) {
-    const userExists = await this.usersRepository.findByName(data.name);
+    const userExists = await this.usersRepository.findByEmail(data.email);
 
     if (userExists) {
       throw new Error(`User ${data.name} already exists`);

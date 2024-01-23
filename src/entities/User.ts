@@ -1,6 +1,7 @@
 export class User {
   public id?: number;
-  public name: string = "";
+  public name?: string = "";
+  public email?: string = "";
   public type?: string | null = "";
   public image?: string | null = "";
 
