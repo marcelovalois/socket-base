@@ -1,4 +1,4 @@
-{
+// {
 	// Place your Socket-Pontuando workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
 	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
 	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
@@ -15,47 +15,50 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// }
-}
+// }
 
+{
+  "Controller": {
+    "scope": "javascript,typescript",
+    "prefix": "controller",
+    "body": [
+      "import { NextFunction, Request, Response } from \"express\";\n",
+      "import { z } from \"zod\";\n",
+      "//Write your schema variable name below"
+      "const ${1:yourSchema} = z.object({});\n"
+      "export class ${TM_FILENAME_BASE} {",
+        "\tconstructor() {}\n",
+        "\thandle = async (req: Request, res: Response, next: NextFunction) => {",
+          "\t\ttry {",
+          "\t\t\tconst body = ${1:yourSchema}.parse(req.body);\n"
+            "\t\t\tconsole.log(body);\n",
+            "\t\t\treturn res.status(200).send(\"OK\");",
+          "\t\t} catch (error) {",
+            "\t\t\tnext(error);",
+          "\t\t}",
+        "\t};",
+      "}\n"
+    ],
+    "description": "Controller Class"
+  },
 
-"Controller": {
-  "scope": "javascript,typescript",
-  "prefix": "controller",
-  "body": [
-    "import { NextFunction, Request, Response } from \"express\";\n",
-    // "\n",
-    "export class ${TM_FILENAME_BASE} {",
-      "\tconstructor() {}\n",
-      // "\n",
-      "\thandle = async (req: Request, res: Response, next: NextFunction) => {",
-        "\t\ttry {",
-          "\t\t\t$1",
-          "\t\t\treturn res.status(200).send(\"OK\");",
-        "\t\t} catch (error) {",
-          "\t\t\tnext(error);",
-        "\t\t}",
-      "\t};",
-    "}"
-  ],
-  "description": "Controller Class"
-},
-
-"Use Case": {
-  "scope": "javascript,typescript",
-  "prefix": "usecase",
-  "body": [
-    "export class ${TM_FILENAME_BASE} {",
-      "\tconstructor() {}\n",
-      // "\n",
-      "\texecute = async () => {",
-        "\t\ttry {",
-          "\t\t\t$1",
-        "\t\t} catch (error) {",
-          "\t\t\tthrow new Error(`Error: ${error}`);",
-        "\t\t}",
-      "\t};",
-    "}"
-  ],
-  "description": "Use Case Class"
-}
+  "Use Case": {
+    "scope": "javascript,typescript",
+    "prefix": "usecase",
+    "body": [
+      "interface I${1:Your}Request {}\n",
+      "export class ${TM_FILENAME_BASE} {",
+        "\tconstructor() {}\n",
+        // "\n",
+        "\texecute = async (data: I${1:Your}Request) => {",
+          "\t\ttry {",
+            "\t\t\tconsole.log(data);$0",
+          "\t\t} catch (error) {",
+            "\t\t\tthrow new Error(`Error: \\${error}`);",
+          "\t\t}",
+        "\t};",
+      "}\n"
+    ],
+    "description": "Use Case Class"
+  }
 }
