@@ -214,8 +214,6 @@ export class PrismaUsersRepository implements IUsersRepository {
         },
       });
 
-      console.log(participations);
-
       return participations.map((participation) => {
         return new Participation(
           {
