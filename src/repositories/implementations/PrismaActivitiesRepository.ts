@@ -68,7 +68,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           title: result.title,
           link: result.link,
           user_id: result.user_id,
-          user_name: result.user.name,
+          creator_name: result.user.name,
           phrases: result.phrases,
           members: result.participations.map((participation) => ({
             user_id: participation.user_id,
@@ -207,7 +207,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
             title: activity.title,
             link: activity.link,
             user_id: activity.user_id,
-            user_name: activity.user.name,
+            creator_name: activity.user.name,
             phrases: activity.phrases,
             members: activity.participations.map((participation) => ({
               user_id: participation.user_id,
