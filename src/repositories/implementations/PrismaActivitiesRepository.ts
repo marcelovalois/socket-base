@@ -31,10 +31,53 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
 
       const result = await prismaClient.activity.create({
         data: createPayload,
-        include: { phrases: true, participations: true },
+        select: {
+          id: true,
+          title: true,
+          link: true,
+          user_id: true,
+          updated_at: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
+          phrases: {
+            select: {
+              text: true,
+              order: true,
+            },
+          },
+          participations: {
+            select: {
+              id: false,
+              user_id: true,
+              user: {
+                select: {
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
+        },
       });
 
-      return result;
+      return new Activity(
+        {
+          title: result.title,
+          link: result.link,
+          user_id: result.user_id,
+          user_name: result.user.name,
+          phrases: result.phrases,
+          members: result.participations.map((participation) => ({
+            user_id: participation.user_id,
+            user_name: participation.user.name,
+            user_type: participation.user.type,
+          })),
+        },
+        result.id,
+      );
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
@@ -127,6 +170,11 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           title: true,
           link: true,
           user_id: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
           phrases: {
             select: {
               id: true,
@@ -159,6 +207,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
             title: activity.title,
             link: activity.link,
             user_id: activity.user_id,
+            user_name: activity.user.name,
             phrases: activity.phrases,
             members: activity.participations.map((participation) => ({
               user_id: participation.user_id,

@@ -181,6 +181,30 @@ export class PrismaUsersRepository implements IUsersRepository {
           activity: {
             select: {
               title: true,
+              user_id: true,
+              link: true,
+              updated_at: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+              phrases: {
+                select: {
+                  text: true,
+                  order: true,
+                },
+              },
+              participations: {
+                select: {
+                  user_id: true,
+                  user: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
             },
           },
 
@@ -190,12 +214,22 @@ export class PrismaUsersRepository implements IUsersRepository {
         },
       });
 
+      console.log(participations);
+
       return participations.map((participation) => {
         return new Participation(
           {
             user_id: participation.user_id,
             activity_id: participation.activity_id,
             activity_title: participation.activity.title,
+            link: participation.activity.link,
+            creator_name: participation.activity.user.name,
+            updated_at: participation.activity.updated_at,
+            phrases: participation.activity.phrases,
+            members: participation.activity.participations.map((member) => ({
+              user_id: member.user_id,
+              user_name: member.user.name,
+            })),
           },
           participation.id,
         );

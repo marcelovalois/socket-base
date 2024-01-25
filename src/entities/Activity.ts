@@ -5,6 +5,7 @@ import { Participation } from "./Participation";
 export class Activity {
   public id?: number;
   public user_id?: number;
+  public user_name?: string;
   public title?: string = "";
   public link?: string | null;
   public phrases?: Phrase[] | [];
