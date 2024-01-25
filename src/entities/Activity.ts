@@ -11,6 +11,7 @@ export class Activity {
   public phrases?: Phrase[] | [];
   public executions?: Execution[] | [];
   public members?: Participation[] | [];
+  public updated_at?: Date;
 
   constructor(props: Omit<Activity, "id">, id?: number) {
     Object.assign(this, props);

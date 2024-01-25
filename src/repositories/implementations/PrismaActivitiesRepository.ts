@@ -208,6 +208,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
             link: activity.link,
             user_id: activity.user_id,
             creator_name: activity.user.name,
+            updated_at: activity.updated_at,
             phrases: activity.phrases,
             members: activity.participations.map((participation) => ({
               user_id: participation.user_id,
