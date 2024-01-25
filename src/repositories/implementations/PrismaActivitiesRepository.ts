@@ -196,7 +196,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           },
 
           created_at: false,
-          updated_at: false,
+          updated_at: true,
           deleted_at: false,
         },
       });
