@@ -24,20 +24,22 @@ export class CreateUserController {
         type,
       });
 
-      res.cookie("pontuandoAuthToken", userData.token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-      });
-      res.status(201).json({
-        success: true,
-        id: userData.id,
-        name: userData.name,
-        email: userData.email,
-        image: userData.image,
-        type: userData.type,
-      });
+      return res
+        .status(201)
+        .cookie("pontuandoAuthToken", userData.token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 1000 * 60 * 60 * 24 * 30,
+        })
+        .json({
+          success: true,
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          image: userData.image,
+          type: userData.type,
+        });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.issues });

@@ -35,7 +35,7 @@ export class PrismaUsersRepository implements IUsersRepository {
 
       const jwtSecret = process.env.JWT_SECRET;
       if (!jwtSecret) throw new Error("JWT_SECRET is not defined");
-      const token = jwt.sign({ email, id: savedUser.id }, jwtSecret, { expiresIn: "1h" });
+      const token = jwt.sign({ email, id: savedUser.id }, jwtSecret, { expiresIn: "30 days" });
 
       return new User(
         {

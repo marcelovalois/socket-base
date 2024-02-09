@@ -3,7 +3,7 @@ import { AuthTokenUseCase } from "./AuthTokenUseCase";
 import { z } from "zod";
 
 const authTokenSchema = z.object({
-  token: z.string(),
+  pontuandoAuthToken: z.string(),
 });
 
 export class AuthTokenController {
@@ -11,26 +11,28 @@ export class AuthTokenController {
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { token } = authTokenSchema.parse(req.cookies);
+      const { pontuandoAuthToken } = authTokenSchema.parse(req.cookies);
 
-      const userData = await this.authTokenUseCase.execute({ token });
+      const userData = await this.authTokenUseCase.execute({ token: pontuandoAuthToken });
 
       if (userData == null) return res.sendStatus(401);
 
-      res.cookie("pontuandoAuthToken", userData.token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-      });
-      res.status(200).json({
-        success: true,
-        id: userData.id,
-        name: userData.name,
-        email: userData.email,
-        image: userData.image,
-        type: userData.type,
-      });
+      return res
+        .status(200)
+        .cookie("pontuandoAuthToken", userData.token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 1000 * 60 * 60 * 24 * 30,
+        })
+        .json({
+          success: true,
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          image: userData.image,
+          type: userData.type,
+        });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.issues });

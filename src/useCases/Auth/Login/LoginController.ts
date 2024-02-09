@@ -19,20 +19,22 @@ export class LoginController {
 
       if (result == null) return res.sendStatus(401);
 
-      res.cookie("pontuandoAuthToken", result.token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-      });
-      res.status(200).json({
-        success: true,
-        id: result.id,
-        name: result.name,
-        email: result.email,
-        image: result.image,
-        type: result.type,
-      });
+      return res
+        .status(200)
+        .cookie("pontuandoAuthToken", result.token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 1000 * 60 * 60 * 24 * 30,
+        })
+        .json({
+          success: true,
+          id: result.id,
+          name: result.name,
+          email: result.email,
+          image: result.image,
+          type: result.type,
+        });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.issues });
