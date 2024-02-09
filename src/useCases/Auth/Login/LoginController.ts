@@ -6,7 +6,6 @@ import { LoginUseCase } from "./LoginUseCase";
 //Write your schema variable name below
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
 });
 
 export class LoginController {
@@ -14,17 +13,32 @@ export class LoginController {
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password } = loginSchema.parse(req.body);
+      const { email } = loginSchema.parse(req.body);
 
-      const token = await this.loginUseCase.execute({ email, password });
+      const result = await this.loginUseCase.execute({ email });
 
-      if (!token) {
-        return res.status(400).json({ error: "Invalid credentials" });
-      }
+      if (result == null) return res.sendStatus(401);
 
-      return res.status(200).json({ token });
+      res.cookie("token", result.token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+      });
+      res.status(200).json({
+        success: true,
+        id: result.id,
+        name: result.name,
+        email: result.email,
+        image: result.image,
+        type: result.type,
+      });
     } catch (error) {
-      next(error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.issues });
+      } else {
+        next(error);
+      }
     }
   };
 }

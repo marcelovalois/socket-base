@@ -1,28 +1,21 @@
-import { Request, Response, NextFunction } from "express";
-import { CreateUserUseCase } from "./CreateUserUseCase";
-
+import { NextFunction, Request, Response } from "express";
+import { AuthTokenUseCase } from "./AuthTokenUseCase";
 import { z } from "zod";
 
-const createUserSchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  image: z.string(),
-  type: z.string(),
+const authTokenSchema = z.object({
+  token: z.string(),
 });
 
-export class CreateUserController {
-  constructor(private createUserUseCase: CreateUserUseCase) {}
+export class AuthTokenController {
+  constructor(private authTokenUseCase: AuthTokenUseCase) {}
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name, email, image, type } = createUserSchema.parse(req.body);
+      const { token } = authTokenSchema.parse(req.cookies);
 
-      const userData = await this.createUserUseCase.execute({
-        name,
-        email,
-        image,
-        type,
-      });
+      const userData = await this.authTokenUseCase.execute({ token });
+
+      if (userData == null) return res.sendStatus(401);
 
       res.cookie("token", userData.token, {
         httpOnly: true,
@@ -30,7 +23,7 @@ export class CreateUserController {
         sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 * 30,
       });
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         id: userData.id,
         name: userData.name,

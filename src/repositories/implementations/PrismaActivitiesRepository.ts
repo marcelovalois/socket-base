@@ -50,7 +50,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           },
           participations: {
             select: {
-              id: false,
+              id: true,
               user_id: true,
               user: {
                 select: {
@@ -71,6 +71,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           creator_name: result.user.name,
           phrases: result.phrases,
           members: result.participations.map((participation) => ({
+            participation_id: participation.id,
             user_id: participation.user_id,
             user_name: participation.user.name,
             user_type: participation.user.type,
@@ -144,14 +145,52 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
         where: {
           id,
         },
-        include: {
-          phrases: true,
-          participations: true,
+        select: {
+          id: true,
+          title: true,
+          link: true,
+          user_id: true,
+          updated_at: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
+          phrases: {
+            select: {
+              text: true,
+              order: true,
+            },
+          },
+          participations: {
+            select: {
+              id: true,
+              user_id: true,
+              user: {
+                select: {
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
         },
       });
 
       if (activity) {
-        return new Activity({ ...activity });
+        return new Activity({
+          title: activity.title,
+          link: activity.link,
+          user_id: activity.user_id,
+          creator_name: activity.user.name,
+          updated_at: activity.updated_at,
+          phrases: activity.phrases,
+          members: activity.participations.map((participation) => ({
+            user_id: participation.user_id,
+            user_name: participation.user.name,
+            user_type: participation.user.type,
+          })),
+        });
       } else {
         return null;
       }

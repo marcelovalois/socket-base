@@ -16,6 +16,7 @@ export class PrismaExecutionsRepository implements IExecutionsRepository {
           activity_id: true,
           user_id: true,
           message_id: true,
+          participation_id: true,
           activity: {
             select: {
               title: true,
@@ -41,6 +42,7 @@ export class PrismaExecutionsRepository implements IExecutionsRepository {
             activity_id: execution.activity_id,
             activity_title: execution.activity.title,
             message_id: execution.message_id,
+            participation_id: execution.participation_id,
             message: execution.message.text,
             pontuando_quote: execution.message.pontuando_quote,
           },
@@ -53,6 +55,7 @@ export class PrismaExecutionsRepository implements IExecutionsRepository {
       await prismaClient.$disconnect();
     }
   }
+
   async listByActivity(id: number): Promise<Execution[]> {
     try {
       const executions = await prismaClient.execution.findMany({
@@ -64,6 +67,7 @@ export class PrismaExecutionsRepository implements IExecutionsRepository {
           activity_id: true,
           user_id: true,
           message_id: true,
+          participation_id: true,
           activity: {
             select: {
               title: true,
@@ -89,6 +93,7 @@ export class PrismaExecutionsRepository implements IExecutionsRepository {
             activity_id: execution.activity_id,
             activity_title: execution.activity.title,
             message_id: execution.message_id,
+            participation_id: execution.participation_id,
             message: execution.message.text,
             pontuando_quote: execution.message.pontuando_quote,
           },
@@ -115,6 +120,7 @@ export class PrismaExecutionsRepository implements IExecutionsRepository {
             create: {
               activity_id: execution.activity_id,
               user_id: execution.user_id,
+              participation_id: execution.participation_id,
             },
           },
         },

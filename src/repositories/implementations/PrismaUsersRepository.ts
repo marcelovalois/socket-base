@@ -2,9 +2,127 @@ import { User } from "../../entities/User";
 import { Participation } from "../../entities/Participation";
 import { IUsersRepository } from "../interfaces/IUsersRepository";
 import { prismaClient } from "../../databases/prismaClient";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
+import("dotenv/config");
 
 export class PrismaUsersRepository implements IUsersRepository {
   constructor() {}
+
+  async insertUser(user: User): Promise<User> {
+    const { name, email, image, type } = user;
+    try {
+      // Salva o usuário
+      const savedUser = await prismaClient.user.create({
+        data: {
+          name: name!,
+          image,
+          type,
+          email: email!,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          type: true,
+
+          created_at: false,
+          updated_at: false,
+          deleted_at: false,
+        },
+      });
+
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) throw new Error("JWT_SECRET is not defined");
+      const token = jwt.sign({ email, id: savedUser.id }, jwtSecret, { expiresIn: "1h" });
+
+      return new User(
+        {
+          name: savedUser.name,
+          email: savedUser.email,
+          image: savedUser.image,
+          type: savedUser.type,
+          token,
+        },
+        savedUser.id,
+      );
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async loginWithEmail(email: string): Promise<User | null> {
+    try {
+      const user = await prismaClient.user.findFirst({
+        where: {
+          email,
+        },
+      });
+
+      if (!user) return null;
+
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) throw new Error("JWT_SECRET is not defined");
+      const token = jwt.sign({ email, id: user.id }, jwtSecret, { expiresIn: "30 days" });
+
+      return new User(
+        {
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          type: user.type,
+          token,
+        },
+        user.id,
+      );
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async authToken(token: string): Promise<User | null> {
+    try {
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) throw new Error("JWT_SECRET is not defined");
+
+      const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+      const id = decoded.id as number;
+
+      const user = await prismaClient.user.findFirst({
+        where: {
+          id,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          type: true,
+        },
+      });
+
+      if (!user) return null;
+
+      return new User(
+        {
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          type: user.type,
+        },
+        user.id,
+      );
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
 
   async findById(id: number): Promise<User | null> {
     try {
@@ -56,27 +174,6 @@ export class PrismaUsersRepository implements IUsersRepository {
       } else {
         return null;
       }
-    } catch (error) {
-      throw new Error(`Error: ${error}`);
-    } finally {
-      await prismaClient.$disconnect();
-    }
-  }
-
-  async insertUser(user: User): Promise<User> {
-    const { name, email, image, type } = user;
-    try {
-      // Salva o usuário
-      const savedUser = await prismaClient.user.create({
-        data: {
-          name: name!,
-          image,
-          type,
-          email: email!,
-        },
-      });
-
-      return savedUser;
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {

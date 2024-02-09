@@ -1,24 +1,18 @@
+import { User } from "../../../entities/User";
 import { IUsersRepository } from "../../../repositories/interfaces/IUsersRepository";
 
 interface ILoginRequest {
   email: string;
-  password: string;
 }
 
 export class LoginUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
-  execute = async (data: ILoginRequest): Promise<string | null> => {
+  execute = async (data: ILoginRequest): Promise<User | null> => {
     try {
-      const user = await this.usersRepository.findByEmail(data.email);
+      const result = await this.usersRepository.loginWithEmail(data.email);
 
-      if (!user) {
-        return null;
-      }
-
-      console.log(user);
-
-      return "token";
+      return result;
     } catch (error) {
       throw new Error(`Error: ${error}`);
     }
