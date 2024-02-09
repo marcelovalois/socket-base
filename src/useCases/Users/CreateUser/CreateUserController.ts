@@ -24,7 +24,7 @@ export class CreateUserController {
         type,
       });
 
-      res.cookie("token", userData.token, {
+      res.cookie("pontuandoAuthToken", userData.token, {
         httpOnly: true,
         secure: true,
         sameSite: "none",

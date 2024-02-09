@@ -17,7 +17,7 @@ export class AuthTokenController {
 
       if (userData == null) return res.sendStatus(401);
 
-      res.cookie("token", userData.token, {
+      res.cookie("pontuandoAuthToken", userData.token, {
         httpOnly: true,
         secure: true,
         sameSite: "none",

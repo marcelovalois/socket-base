@@ -19,7 +19,7 @@ export class LoginController {
 
       if (result == null) return res.sendStatus(401);
 
-      res.cookie("token", result.token, {
+      res.cookie("pontuandoAuthToken", result.token, {
         httpOnly: true,
         secure: true,
         sameSite: "none",
