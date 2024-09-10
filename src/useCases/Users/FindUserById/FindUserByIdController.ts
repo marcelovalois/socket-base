@@ -14,7 +14,7 @@ export class FindUserByIdController {
     try {
       const { id } = findUserByIdSchema.parse(req.params);
 
-      const user = await this.findUserByIdUseCase.execute(id);
+      const user = await this.findUserByIdUseCase.execute({ id });
 
       return res.status(200).json({ success: true, user });
     } catch (error) {

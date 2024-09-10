@@ -11,9 +11,9 @@ export class FindUserByEmailController {
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email } = findUserByEmailSchema.parse(req.body);
+      const { email } = findUserByEmailSchema.parse(req.query);
 
-      const user = await this.findUserByEmailUseCase.execute(email);
+      const user = await this.findUserByEmailUseCase.execute({ email });
 
       return res.status(200).json({ success: true, user });
     } catch (error) {

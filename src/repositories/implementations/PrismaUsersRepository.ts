@@ -2,14 +2,13 @@ import { User } from "../../entities/User";
 import { Participation } from "../../entities/Participation";
 import { IUsersRepository } from "../interfaces/IUsersRepository";
 import { prismaClient } from "../../databases/prismaClient";
-import jwt, { JwtPayload } from "jsonwebtoken";
 
 import("dotenv/config");
 
 export class PrismaUsersRepository implements IUsersRepository {
   constructor() {}
 
-  async insertUser(user: User): Promise<User> {
+  async insert(user: User): Promise<User> {
     const { name, email, image, type } = user;
     try {
       // Salva o usuário
@@ -33,90 +32,66 @@ export class PrismaUsersRepository implements IUsersRepository {
         },
       });
 
-      const jwtSecret = process.env.JWT_SECRET;
-      if (!jwtSecret) throw new Error("JWT_SECRET is not defined");
-      const token = jwt.sign({ email, id: savedUser.id }, jwtSecret, { expiresIn: "30 days" });
-
       return new User(
         {
           name: savedUser.name,
           email: savedUser.email,
           image: savedUser.image,
           type: savedUser.type,
-          token,
         },
         savedUser.id,
       );
     } catch (error) {
-      throw new Error(`Error: ${error}`);
+      throw new Error(`${error}`);
     } finally {
       await prismaClient.$disconnect();
     }
   }
 
-  async loginWithEmail(email: string): Promise<User | null> {
+  async list(): Promise<User[]> {
     try {
-      const user = await prismaClient.user.findFirst({
-        where: {
-          email,
-        },
-      });
-
-      if (!user) return null;
-
-      const jwtSecret = process.env.JWT_SECRET;
-      if (!jwtSecret) throw new Error("JWT_SECRET is not defined");
-      const token = jwt.sign({ email, id: user.id }, jwtSecret, { expiresIn: "30 days" });
-
-      return new User(
-        {
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          type: user.type,
-          token,
-        },
-        user.id,
-      );
-    } catch (error) {
-      throw new Error(`Error: ${error}`);
-    } finally {
-      await prismaClient.$disconnect();
-    }
-  }
-
-  async authToken(token: string): Promise<User | null> {
-    try {
-      const jwtSecret = process.env.JWT_SECRET;
-      if (!jwtSecret) throw new Error("JWT_SECRET is not defined");
-
-      const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
-      const id = decoded.id as number;
-
-      const user = await prismaClient.user.findFirst({
-        where: {
-          id,
-        },
+      // Lista todos os usuários
+      const result = await prismaClient.user.findMany({
         select: {
           id: true,
           name: true,
           email: true,
           image: true,
           type: true,
+
+          created_at: false,
+          updated_at: false,
+          deleted_at: false,
         },
       });
 
-      if (!user) return null;
+      return result;
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
 
-      return new User(
-        {
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          type: user.type,
+  async findByEmail(email: string): Promise<User | null> {
+    try {
+      // Busca o usuário pelo nome
+      const user = await prismaClient.user.findFirst({
+        where: {
+          email,
         },
-        user.id,
-      );
+      });
+
+      // Se o usuário existir, retorna o usuário
+      if (user) {
+        return new User({
+          name: user.name,
+          image: user.image,
+          email: user.email,
+        });
+      } else {
+        return null;
+      }
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
@@ -154,59 +129,7 @@ export class PrismaUsersRepository implements IUsersRepository {
     }
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    try {
-      // Busca o usuário pelo nome
-      const user = await prismaClient.user.findFirst({
-        where: {
-          email,
-        },
-      });
-
-      // Se o usuário existir, retorna o usuário
-      if (user) {
-        return new User({
-          name: user.name,
-          image: user.image,
-          type: user.type,
-          email: user.email,
-        });
-      } else {
-        return null;
-      }
-    } catch (error) {
-      throw new Error(`Error: ${error}`);
-    } finally {
-      await prismaClient.$disconnect();
-    }
-  }
-
-  async listAll(): Promise<User[]> {
-    try {
-      // Lista todos os usuários
-      const result = await prismaClient.user.findMany({
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-          type: true,
-
-          created_at: false,
-          updated_at: false,
-          deleted_at: false,
-        },
-      });
-
-      return result;
-    } catch (error) {
-      throw new Error(`Error: ${error}`);
-    } finally {
-      await prismaClient.$disconnect();
-    }
-  }
-
-  async updateUser(user: User): Promise<void> {
+  async update(user: User): Promise<void> {
     try {
       // Checa se o usuário existe
       const userExists = await prismaClient.user.findUnique({
@@ -238,7 +161,7 @@ export class PrismaUsersRepository implements IUsersRepository {
     }
   }
 
-  async removeUser(id: number): Promise<User> {
+  async delete(id: number): Promise<User> {
     try {
       // Checa se o usuário existe
       const user = await prismaClient.user.findUnique({
@@ -250,9 +173,12 @@ export class PrismaUsersRepository implements IUsersRepository {
       if (!user) throw new Error("Usuário não encontrado");
 
       // Deleta o usuário
-      const result: User = await prismaClient.user.delete({
+      const result: User = await prismaClient.user.update({
         where: {
           id: user.id,
+        },
+        data: {
+          deleted_at: new Date(),
         },
       });
 
@@ -265,7 +191,7 @@ export class PrismaUsersRepository implements IUsersRepository {
     }
   }
 
-  async listActivitiesByUser(id: number): Promise<Participation[]> {
+  async listActivities(id: number): Promise<Participation[]> {
     try {
       const participations = await prismaClient.participation.findMany({
         where: {

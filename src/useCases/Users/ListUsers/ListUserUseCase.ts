@@ -3,8 +3,8 @@ import { IUsersRepository } from "../../../repositories/interfaces/IUsersReposit
 export class ListUserUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
-  execute = async () => {
-    const users = await this.usersRepository.listAll();
+  async execute() {
+    const users = await this.usersRepository.list();
     return users;
-  };
+  }
 }

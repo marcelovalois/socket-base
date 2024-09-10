@@ -1,13 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { CreateUserUseCase } from "./CreateUserUseCase";
+import jwt from "jsonwebtoken";
+import config from "../../../config/config";
 
 import { z } from "zod";
 
 const createUserSchema = z.object({
   name: z.string(),
   email: z.string().email(),
-  image: z.string(),
-  type: z.string(),
+  image: z.string().optional(),
+  type: z.string().optional(),
 });
 
 export class CreateUserController {
@@ -24,13 +26,16 @@ export class CreateUserController {
         type,
       });
 
+      // Ao criar o usuário, já faz o login
+      const token = jwt.sign({ id: userData.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
+
       return res
         .status(201)
-        .cookie("pontuandoAuthToken", userData.token, {
+        .cookie("pontuandoAuthToken", token, {
           httpOnly: true,
-          secure: true,
+          // secure: true,
           sameSite: "none",
-          maxAge: 1000 * 60 * 60 * 24 * 30,
+          maxAge: 1000 * 60 * 60 * 24 * 1,
         })
         .json({
           success: true,

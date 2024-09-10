@@ -24,7 +24,6 @@ import { removeUserFromActivityController } from "./useCases/Activities/RemoveUs
 import { insertUserWithLinkController } from "./useCases/Activities/InsertUserWithLink";
 
 import { loginController } from "./useCases/Auth/Login";
-import { authTokenController } from "./useCases/Auth/AuthToken";
 
 const routes = Router();
 
@@ -51,7 +50,6 @@ routes.post("/join_with_link", insertUserWithLinkController.handle);
 routes.delete("/delete_activity/:id", deleteActivityController.handle);
 routes.delete("/remove_user_from_activity", removeUserFromActivityController.handle);
 
-routes.get("/auth", authTokenController.handle);
 routes.post("/login", loginController.handle);
 
 export default routes;

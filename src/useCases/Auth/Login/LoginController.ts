@@ -23,21 +23,23 @@ export class LoginController {
         .status(200)
         .cookie("pontuandoAuthToken", result.token, {
           httpOnly: true,
-          secure: true,
+          // secure: true,
           sameSite: "none",
-          maxAge: 1000 * 60 * 60 * 24 * 30,
+          maxAge: 1000 * 60 * 60 * 24 * 1,
         })
         .json({
           success: true,
-          id: result.id,
-          name: result.name,
-          email: result.email,
-          image: result.image,
-          type: result.type,
+          data: {
+            id: result.id,
+            name: result.name,
+            email: result.email,
+            image: result.image,
+            type: result.type,
+          },
         });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.issues });
+        return res.status(400).json({ success: false, error: error.issues });
       } else {
         next(error);
       }
