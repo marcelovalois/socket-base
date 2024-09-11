@@ -12,12 +12,10 @@ export class CreateActivityUseCase {
   constructor(private activitiesRepository: IActivitiesRepository) {}
 
   async execute({ user_id, title, phrases }: ICreateActivityRequest): Promise<Activity> {
-    const activity = await this.activitiesRepository.createActivity({
-      user_id,
-      title,
-      phrases,
-    });
+    const activity = new Activity({ user_id, title, phrases });
 
-    return activity;
+    const activityData = await this.activitiesRepository.create(activity);
+
+    return activityData;
   }
 }

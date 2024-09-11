@@ -9,6 +9,7 @@ class SocketManager {
   private handleSocketConnection(): void {
     this.io.on("connection", async (socket: Socket) => {
       try {
+        console.log(`User connected to socket id ${socket.id}`);
         const id = socket.handshake.query.id;
         if (!id) {
           socket.disconnect();
@@ -17,8 +18,7 @@ class SocketManager {
 
         const parsedId = Number(id);
 
-        const user = await findUserByIdUseCase.execute(parsedId);
-        console.log(user);
+        const user = await findUserByIdUseCase.execute({ id: parsedId });
 
         if (user) {
           socket.join(user.id?.toString() || "");

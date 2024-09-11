@@ -15,6 +15,9 @@ export class FindActivityByIdController {
 
       const activity = await this.findActivityByIdUseCase.execute(id);
 
+      if (!activity) {
+        return res.status(404).json({ error: "Activity not found" });
+      }
       return res.status(200).json({ success: true, activity });
     } catch (error) {
       if (error instanceof z.ZodError) {

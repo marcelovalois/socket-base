@@ -4,7 +4,7 @@ export class ListActivitiesUseCase {
   constructor(private activityRepository: IActivitiesRepository) {}
 
   async execute() {
-    const activities = await this.activityRepository.listAll();
+    const activities = await this.activityRepository.list();
 
     return activities;
   }

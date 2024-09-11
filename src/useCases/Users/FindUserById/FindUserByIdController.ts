@@ -16,10 +16,13 @@ export class FindUserByIdController {
 
       const user = await this.findUserByIdUseCase.execute({ id });
 
-      return res.status(200).json({ success: true, user });
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      return res.status(200).json({ success: true, data: user });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.issues });
+        return res.status(400).json({ success: false, error: error.issues });
       } else {
         next(error);
       }

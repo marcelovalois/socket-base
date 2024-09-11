@@ -6,7 +6,7 @@ import { IActivitiesRepository } from "../interfaces/IActivitiesRepository";
 export class PrismaActivitiesRepository implements IActivitiesRepository {
   constructor() {}
 
-  async createActivity(activity: Activity): Promise<Activity> {
+  async create(activity: Activity): Promise<Activity> {
     try {
       const createPayload = {
         title: activity.title!,
@@ -86,52 +86,63 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
     }
   }
 
-  async updateActivity(activity: Activity): Promise<void> {
+  async list(): Promise<Activity[]> {
     try {
-      const updatePayload = {};
-
-      if (activity.title) {
-        Object.assign(updatePayload, { title: activity.title });
-      }
-
-      if (activity.phrases) {
-        Object.assign(updatePayload, {
+      const activities = await prismaClient.activity.findMany({
+        select: {
+          id: true,
+          title: true,
+          link: true,
+          user_id: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
           phrases: {
-            deleteMany: [{ activity_id: activity.id }],
-            create: activity.phrases.map((phrase) => ({
-              text: phrase.text,
-              order: phrase.order,
+            select: {
+              id: true,
+              text: true,
+              order: true,
+            },
+          },
+          participations: {
+            select: {
+              id: false,
+              user_id: true,
+              user: {
+                select: {
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
+
+          created_at: false,
+          updated_at: true,
+          deleted_at: false,
+        },
+      });
+
+      return activities.map((activity) => {
+        return new Activity(
+          {
+            title: activity.title,
+            link: activity.link,
+            user_id: activity.user_id,
+            creator_name: activity.user.name,
+            updated_at: activity.updated_at,
+            phrases: activity.phrases,
+            members: activity.participations.map((participation) => ({
+              user_id: participation.user_id,
+              user_name: participation.user.name,
+              user_type: participation.user.type,
             })),
           },
-        });
-      }
-
-      await prismaClient.activity.update({
-        where: {
-          id: activity.id,
-        },
-        data: updatePayload,
+          activity.id,
+        );
       });
-    } catch (error) {
-      throw new Error(`Error: ${error}`);
-    } finally {
-      await prismaClient.$disconnect();
-    }
-  }
-
-  async deleteActivity(id: number): Promise<void> {
-    try {
-      await prismaClient.$transaction([
-        prismaClient.phrase.deleteMany({
-          where: { activity_id: id },
-        }),
-        prismaClient.participation.deleteMany({
-          where: { activity_id: id },
-        }),
-        prismaClient.activity.delete({
-          where: { id },
-        }),
-      ]);
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
@@ -201,63 +212,52 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
     }
   }
 
-  async listAll(): Promise<Activity[]> {
+  async updateActivity(activity: Activity): Promise<void> {
     try {
-      const activities = await prismaClient.activity.findMany({
-        select: {
-          id: true,
-          title: true,
-          link: true,
-          user_id: true,
-          user: {
-            select: {
-              name: true,
-            },
-          },
+      const updatePayload = {};
+
+      if (activity.title) {
+        Object.assign(updatePayload, { title: activity.title });
+      }
+
+      if (activity.phrases) {
+        Object.assign(updatePayload, {
           phrases: {
-            select: {
-              id: true,
-              text: true,
-              order: true,
-            },
-          },
-          participations: {
-            select: {
-              id: false,
-              user_id: true,
-              user: {
-                select: {
-                  name: true,
-                  type: true,
-                },
-              },
-            },
-          },
-
-          created_at: false,
-          updated_at: true,
-          deleted_at: false,
-        },
-      });
-
-      return activities.map((activity) => {
-        return new Activity(
-          {
-            title: activity.title,
-            link: activity.link,
-            user_id: activity.user_id,
-            creator_name: activity.user.name,
-            updated_at: activity.updated_at,
-            phrases: activity.phrases,
-            members: activity.participations.map((participation) => ({
-              user_id: participation.user_id,
-              user_name: participation.user.name,
-              user_type: participation.user.type,
+            deleteMany: [{ activity_id: activity.id }],
+            create: activity.phrases.map((phrase) => ({
+              text: phrase.text,
+              order: phrase.order,
             })),
           },
-          activity.id,
-        );
+        });
+      }
+
+      await prismaClient.activity.update({
+        where: {
+          id: activity.id,
+        },
+        data: updatePayload,
       });
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
+
+  async deleteActivity(id: number): Promise<void> {
+    try {
+      await prismaClient.$transaction([
+        prismaClient.phrase.deleteMany({
+          where: { activity_id: id },
+        }),
+        prismaClient.participation.deleteMany({
+          where: { activity_id: id },
+        }),
+        prismaClient.activity.delete({
+          where: { id },
+        }),
+      ]);
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {

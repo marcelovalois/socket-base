@@ -26,7 +26,7 @@ export class CreateActivityController {
       return res.status(201).json({ success: true, data: activity });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.issues });
+        return res.status(400).json({ success: false, error: error.issues });
       } else {
         next(error);
       }

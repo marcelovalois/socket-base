@@ -4,13 +4,13 @@ import { Participation } from "./Participation";
 
 export class Activity {
   public id?: number;
-  public user_id?: number;
-  public creator_name?: string;
   public title?: string = "";
   public link?: string | null;
-  public phrases?: Phrase[] | [];
-  public executions?: Execution[] | [];
-  public members?: Participation[] | [];
+  public user_id?: number;
+  public creator_name?: string;
+  public phrases?: Phrase[];
+  public executions?: Execution[];
+  public members?: Participation[];
   public updated_at?: Date;
 
   constructor(props: Omit<Activity, "id">, id?: number) {
