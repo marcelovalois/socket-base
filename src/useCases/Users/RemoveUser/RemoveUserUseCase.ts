@@ -9,7 +9,9 @@ export class RemoveUserUseCase {
 
     // If user does not exist, throw an error
     if (!user) {
-      throw new Error("User not found");
+      const error = new Error(`User with id: ${id} does not exist`) as ErrorWithStatus;
+      error.status = 404;
+      throw error;
     }
 
     const userData = await this.usersRepository.delete(id);

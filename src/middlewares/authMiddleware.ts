@@ -19,7 +19,7 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
 
     jwt.verify(token, config.jwt.secret as string, (err, decoded) => {
       if (err) {
-        return res.status(403).json({ message: "Invalid or expired token" });
+        return res.status(401).json({ message: "Invalid or expired token" });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

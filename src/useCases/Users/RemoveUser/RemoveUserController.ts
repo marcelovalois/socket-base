@@ -16,10 +16,10 @@ export class RemoveUserController {
 
       const userData = await this.removeUserUseCase.execute(id);
 
-      return res.status(204).json({ success: true, id: userData.id });
+      return res.status(200).json({ success: true, message: "User removed successfully", data: { id: userData.id } });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.issues });
+        return res.status(422).json({ success: false, message: "Error: Invalid data", error: error.issues });
       } else {
         next(error);
       }

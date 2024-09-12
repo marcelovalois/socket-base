@@ -16,12 +16,12 @@ export class FindActivityByIdController {
       const activity = await this.findActivityByIdUseCase.execute(id);
 
       if (!activity) {
-        return res.status(404).json({ error: "Activity not found" });
+        return res.status(404).json({ success: false, message: "Activity not found", data: {} });
       }
       return res.status(200).json({ success: true, activity });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.issues });
+        return res.status(422).json({ success: false, message: "Error: Invalid data", error: error.issues });
       } else {
         next(error);
       }

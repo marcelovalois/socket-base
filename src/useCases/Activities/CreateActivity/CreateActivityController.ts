@@ -23,10 +23,10 @@ export class CreateActivityController {
 
       const activity = await this.createActivityUseCase.execute({ title, user_id, phrases });
 
-      return res.status(201).json({ success: true, data: activity });
+      return res.status(201).json({ success: true, message: "Activity created successfully", data: activity });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ success: false, error: error.issues });
+        return res.status(422).json({ success: false, message: "Error: Invalid data", error: error.issues });
       } else {
         next(error);
       }

@@ -39,18 +39,20 @@ export class CreateUserController {
         })
         .json({
           success: true,
-          id: userData.id,
-          name: userData.name,
-          email: userData.email,
-          image: userData.image,
-          type: userData.type,
+          message: "User created successfully",
+          data: {
+            id: userData.id,
+            name: userData.name,
+            email: userData.email,
+            image: userData.image,
+            type: userData.type,
+          },
         });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ success: false, error: error.issues });
-      } else {
-        next(error);
+        return res.status(422).json({ success: false, message: "Error: Invalid data", error: error.issues });
       }
+      next(error);
     }
   };
 }

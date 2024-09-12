@@ -17,7 +17,9 @@ export class UpdateUserUseCase {
     const userExists = await this.usersRepository.findById(data.id);
 
     if (!userExists) {
-      throw new Error(`User ${data.id} not found`);
+      const error = new Error(`User with id: ${data.id} does not exist`) as ErrorWithStatus;
+      error.status = 404;
+      throw error;
     }
 
     // Check if email is already in use
