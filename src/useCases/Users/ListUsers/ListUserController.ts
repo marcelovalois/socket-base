@@ -18,7 +18,7 @@ export class ListUserController {
         return res.status(404).json({ success: false, message: "No users found", data: [] });
       }
 
-      return res.status(200).json({ success: false, message: "Users found successfully", data: users });
+      return res.status(200).json({ success: true, message: "Users found successfully", data: users });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(422).json({ success: false, message: "Error: Invalid data", error: error.issues });

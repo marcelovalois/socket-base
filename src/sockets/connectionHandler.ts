@@ -20,10 +20,6 @@ export const handleSocketConnection: (io: SocketIOServer) => void = (io) => {
 
       socket.on("disconnect", () => {
         console.log(`User disconnected from socket id ${socket.id}`);
-        // let users: UserData[] = myCache.get("users") || [];
-        // users = users.filter((user) => user.id !== socket.id);
-        // myCache.set("users", users);
-        // socket.broadcast.emit("removeContactFromClient", socket.id);
       });
     } catch (error) {
       console.error(`Error handling socket connection: ${error}`);

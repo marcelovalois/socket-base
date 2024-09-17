@@ -84,11 +84,14 @@ export class PrismaUsersRepository implements IUsersRepository {
 
       // Se o usuário existir, retorna o usuário
       if (user) {
-        return new User({
-          name: user.name,
-          image: user.image,
-          email: user.email,
-        });
+        return new User(
+          {
+            name: user.name,
+            image: user.image,
+            email: user.email,
+          },
+          user.id,
+        );
       } else {
         return null;
       }

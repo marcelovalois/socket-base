@@ -17,19 +17,21 @@ export class LoginController {
 
       const result = await this.loginUseCase.execute({ email });
 
-      if (result == null) return res.sendStatus(401);
+      if (result == null) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
       return res
         .status(200)
         .cookie("pontuandoAuthToken", result.token, {
           httpOnly: true,
-          // secure: true,
+          secure: true,
           sameSite: "none",
           maxAge: 1000 * 60 * 60 * 24 * 1,
         })
         .json({
           success: true,
+          message: "Authenticated",
           data: {
+            token: result.token,
             id: result.id,
             name: result.name,
             email: result.email,
