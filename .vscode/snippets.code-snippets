@@ -30,11 +30,15 @@
         "\tconstructor() {}\n",
         "\thandle = async (req: Request, res: Response, next: NextFunction) => {",
           "\t\ttry {",
-          "\t\t\tconst body = ${1:yourSchema}.parse(req.body);\n"
+            "\t\t\tconst body = ${1:yourSchema}.parse(req.body);\n"
             "\t\t\tconsole.log(body);\n",
-            "\t\t\treturn res.status(200).send(\"OK\");",
+            "\t\t\treturn res.status(200).json({ success: true, message: \"\", data: {} });",
           "\t\t} catch (error) {",
-            "\t\t\tnext(error);",
+            "\t\t\tif (error instanceof z.ZodError) {",
+              "\t\t\t\treturn res.status(422).json({ success: false, message: \"Error: Invalid data\", error: error.issues });",
+            "\t\t\t} else {",
+              "\t\t\t\tnext(error);",
+            "\t\t\t}",
           "\t\t}",
         "\t};",
       "}\n"
