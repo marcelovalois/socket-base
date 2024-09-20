@@ -1,16 +1,18 @@
 import { prismaClient } from "../../databases/prismaClient";
 import { Activity } from "../../entities/Activity";
 import { Participation } from "../../entities/Participation";
+import { ICreateActivityResponseDTO } from "../../useCases/Activities/CreateActivity/CreateActivityDTO";
 import { IActivitiesRepository } from "../interfaces/IActivitiesRepository";
 
 export class PrismaActivitiesRepository implements IActivitiesRepository {
   constructor() {}
 
-  async create(activity: Activity): Promise<Activity> {
+  async create(activity: Activity): Promise<ICreateActivityResponseDTO> {
     try {
       const createPayload = {
         title: activity.title!,
         user_id: activity.user_id!,
+        slug: activity.slug,
         participations: {
           create: {
             user_id: activity.user_id!,
@@ -36,6 +38,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           title: true,
           link: true,
           user_id: true,
+          slug: true,
           updated_at: true,
           user: {
             select: {
@@ -63,22 +66,21 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
         },
       });
 
-      return new Activity(
-        {
-          title: result.title,
-          link: result.link,
-          user_id: result.user_id,
-          creator_name: result.user.name,
-          phrases: result.phrases,
-          members: result.participations.map((participation) => ({
-            participation_id: participation.id,
-            user_id: participation.user_id,
-            user_name: participation.user.name,
-            user_type: participation.user.type,
-          })),
-        },
-        result.id,
-      );
+      return {
+        id: result.id,
+        title: result.title,
+        link: result.link,
+        user_id: result.user_id,
+        slug: result.slug,
+        creator_name: result.user.name,
+        phrases: result.phrases,
+        members: result.participations.map((participation) => ({
+          participation_id: participation.id,
+          user_id: participation.user_id,
+          user_name: participation.user.name,
+          user_type: participation.user.type,
+        })),
+      };
     } catch (error) {
       throw new Error(`Error: ${error}`);
     } finally {
@@ -86,7 +88,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
     }
   }
 
-  async list(): Promise<Activity[]> {
+  async list(): Promise<ICreateActivityResponseDTO[]> {
     try {
       const activities = await prismaClient.activity.findMany({
         select: {
@@ -94,6 +96,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           title: true,
           link: true,
           user_id: true,
+          slug: true,
           user: {
             select: {
               name: true,
@@ -126,22 +129,21 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
       });
 
       return activities.map((activity) => {
-        return new Activity(
-          {
-            title: activity.title,
-            link: activity.link,
-            user_id: activity.user_id,
-            creator_name: activity.user.name,
-            updated_at: activity.updated_at,
-            phrases: activity.phrases,
-            members: activity.participations.map((participation) => ({
-              user_id: participation.user_id,
-              user_name: participation.user.name,
-              user_type: participation.user.type,
-            })),
-          },
-          activity.id,
-        );
+        return {
+          id: activity.id,
+          title: activity.title,
+          link: activity.link,
+          user_id: activity.user_id,
+          slug: activity.slug,
+          creator_name: activity.user.name,
+          updated_at: activity.updated_at,
+          phrases: activity.phrases,
+          members: activity.participations.map((participation) => ({
+            user_id: participation.user_id,
+            user_name: participation.user.name,
+            user_type: participation.user.type,
+          })),
+        };
       });
     } catch (error) {
       throw new Error(`Error: ${error}`);
@@ -150,7 +152,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
     }
   }
 
-  async findById(id: number): Promise<Activity | null> {
+  async findById(id: number): Promise<ICreateActivityResponseDTO | null> {
     try {
       const activity = await prismaClient.activity.findUnique({
         where: {
@@ -161,6 +163,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
           title: true,
           link: true,
           user_id: true,
+          slug: true,
           updated_at: true,
           user: {
             select: {
@@ -189,10 +192,11 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
       });
 
       if (activity) {
-        return new Activity({
+        return {
           title: activity.title,
           link: activity.link,
           user_id: activity.user_id,
+          slug: activity.slug,
           creator_name: activity.user.name,
           updated_at: activity.updated_at,
           phrases: activity.phrases,
@@ -201,7 +205,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
             user_name: participation.user.name,
             user_type: participation.user.type,
           })),
-        });
+        };
       } else {
         return null;
       }
@@ -270,12 +274,14 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
       const activities = await prismaClient.activity.findMany({
         where: {
           user_id: id,
+          deleted_at: null,
         },
         select: {
           id: true,
           title: true,
           link: true,
           user_id: true,
+          slug: true,
           phrases: {
             select: {
               id: true,
@@ -308,6 +314,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
             title: activity.title,
             link: activity.link,
             user_id: activity.user_id,
+            slug: activity.slug,
             phrases: activity.phrases,
             members: activity.participations.map((participation) => ({
               user_id: participation.user_id,

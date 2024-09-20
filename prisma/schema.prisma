@@ -32,6 +32,7 @@ model Activity {
   id             Int             @id @default(autoincrement())
   title          String
   link           String?
+  slug           String
   user_id        Int
   user           User            @relation(fields: [user_id], references: [id])
   phrases        Phrase[]

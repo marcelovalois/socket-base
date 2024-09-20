@@ -2,14 +2,6 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import config from "../config/config";
 
-interface TokenPayload {
-  id: number;
-  name?: string;
-  email?: string;
-  iat: number;
-  exp: number;
-}
-
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
   // Token obtido através do cookie
   const cookies = req.cookies;

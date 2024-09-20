@@ -1,8 +1,9 @@
 import { Activity } from "../../entities/Activity";
 import { Participation } from "../../entities/Participation";
+import { ICreateActivityResponseDTO } from "../../useCases/Activities/CreateActivity/CreateActivityDTO";
 
 export interface IActivitiesRepository {
-  create(activity: Activity): Promise<Activity>;
+  create(activity: Activity): Promise<ICreateActivityResponseDTO>;
   list(): Promise<Activity[]>;
   findById(id: number): Promise<Activity | null>;
   listByCreator(id: number): Promise<Activity[]>;
