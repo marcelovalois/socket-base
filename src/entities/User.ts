@@ -1,6 +1,6 @@
 export class User {
-  public id?: number;
-  public name?: string | null;
+  public id: number = NaN;
+  public name: string = "";
   public email?: string | null;
   public type?: string | null;
   public image?: string | null;

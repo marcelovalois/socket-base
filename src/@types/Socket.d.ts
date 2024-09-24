@@ -1,4 +1,8 @@
-type Ack = {
-  status: string;
-  message: string;
-};
+import { Socket } from "socket.io";
+
+interface SocketWithUser extends Socket {
+  user?: {
+    id: number;
+    name: string;
+  };
+}

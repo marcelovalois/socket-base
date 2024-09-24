@@ -1,5 +1,5 @@
 import { Server as SocketIOServer } from "socket.io";
-import { handleSocketConnection } from "./connectionHandler";
+import { handleSocketConnection } from "./handlers/connectionHandler";
 
 class SocketManager {
   constructor(private io: SocketIOServer) {
