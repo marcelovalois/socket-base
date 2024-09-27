@@ -17,11 +17,11 @@ export class RoomManager {
     }
   }
 
-  public leaveRoom(room: string, user_id: number): void {
+  public leaveRoom(room: string, socketId: string): void {
     if (this.rooms.has(room)) {
       const users = this.rooms.get(room);
       if (users) {
-        const updatedUsers = users.filter((u) => u.id !== user_id);
+        const updatedUsers = users.filter((u) => u.socketId !== socketId);
         this.rooms.set(room, updatedUsers);
       }
     }

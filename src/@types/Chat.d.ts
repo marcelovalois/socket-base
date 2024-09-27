@@ -7,5 +7,6 @@ type ChatMessage = {
 type ChatUser = {
   id: number;
   name: string;
+  socketId: string;
   photo?: string;
 };

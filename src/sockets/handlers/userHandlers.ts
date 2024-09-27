@@ -1,6 +1,6 @@
 import { findUserByIdUseCase } from "../../useCases/Users/FindUserById"; // Certifique-se de importar corretamente
 import { SocketWithUser } from "../../@types/Socket";
-import { RoomManager } from "../roomManager";
+import { RoomManager } from "../RoomManager";
 
 export const handleUserConnection = async (socket: SocketWithUser, connectedUsers: RoomManager) => {
   // Obtenha o id do usuário do query params
@@ -20,7 +20,7 @@ export const handleUserConnection = async (socket: SocketWithUser, connectedUser
     socket.join(activity_id);
 
     // Adiciona o usuário à lista de usuários conectados à sala
-    connectedUsers.joinRoom(activity_id, { id: user.id, name: user.name });
+    connectedUsers.joinRoom(activity_id, { id: user.id, name: user.name, socketId: socket.id });
 
     // Adiciona as informações do usuário ao socket, para acesso posterior
     socket.user = { id: user.id, name: user.name };
@@ -37,15 +37,16 @@ export const handleUserConnection = async (socket: SocketWithUser, connectedUser
 };
 
 export const handleUserDisconnection = (socket: SocketWithUser, connectedUsers: RoomManager) => {
-  const user_id = socket.user?.id;
-  const activity_id = socket.handshake.query.activity_id as string;
+  const userId = socket.user?.id;
+  const activityId = socket.handshake.query.activity_id as string;
+  const socketId = socket.id;
 
-  if (user_id) {
+  if (userId) {
     // Remove o usuário da lista de usuários conectados à sala
-    connectedUsers.leaveRoom(activity_id, user_id);
+    connectedUsers.leaveRoom(activityId, socketId);
 
-    socket.to(activity_id).emit("onGetRoomUsers", connectedUsers.getRoomUsers(activity_id));
+    socket.to(activityId).emit("onGetRoomUsers", connectedUsers.getRoomUsers(activityId));
 
-    console.log(`User ${user_id} disconnected from socket id ${socket.id} in activity ${activity_id}`);
+    console.log(`User ${userId} disconnected from socket id ${socket.id} in activity ${activityId}`);
   }
 };

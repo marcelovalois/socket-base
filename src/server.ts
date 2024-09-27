@@ -1,6 +1,6 @@
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
-import SocketManager from "./sockets/socketManager";
+import SocketManager from "./sockets/SocketManager";
 
 import app from "./app";
 
