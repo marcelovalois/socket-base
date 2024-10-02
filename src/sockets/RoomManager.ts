@@ -30,4 +30,36 @@ export class RoomManager {
   public getRoomUsers(room: string): ChatUser[] {
     return this.rooms.get(room) || [];
   }
+
+  public unlockUser(room: string, userId: number): void {
+    if (this.rooms.has(room)) {
+      const users = this.rooms.get(room);
+      if (users) {
+        const updatedUsers = users.map((u) => {
+          if (u.id === userId) {
+            u.isLocked = false;
+          } else {
+            u.isLocked = true;
+          }
+          return u;
+        });
+        this.rooms.set(room, updatedUsers);
+      }
+    }
+  }
+
+  public lockUser(room: string, userId: number): void {
+    if (this.rooms.has(room)) {
+      const users = this.rooms.get(room);
+      if (users) {
+        const updatedUsers = users.map((u) => {
+          if (u.id === userId) {
+            u.isLocked = true;
+          }
+          return u;
+        });
+        this.rooms.set(room, updatedUsers);
+      }
+    }
+  }
 }

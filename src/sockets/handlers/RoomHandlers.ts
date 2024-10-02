@@ -2,13 +2,15 @@ import { Socket } from "socket.io";
 import { RoomManager } from "../RoomManager";
 
 export class RoomHandlers {
-  public handleGetRoomUsers(socket: Socket, ack: (arg0: string) => void, connectedUsers: RoomManager) {
+  constructor(private connectedUsers: RoomManager) {}
+
+  public handleGetRoomUsers(socket: Socket, ack: (arg0: string) => void) {
     try {
       // Obtenha o id da atividade do query params
       const activity_id = socket.handshake.query.activity_id as string;
 
       // Obtém os usuários conectados à sala
-      const users = connectedUsers.getRoomUsers(activity_id);
+      const users = this.connectedUsers.getRoomUsers(activity_id);
 
       // Envia a lista de todos os outros usuários conectados à sala
       socket.to(activity_id).emit("onGetRoomUsers", users);
