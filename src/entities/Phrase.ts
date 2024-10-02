@@ -1,8 +1,8 @@
 export class Phrase {
   public id?: number;
   public text: string = "";
-  public order: number = 0;
-  public activity_id?: number;
+  public order?: number;
+  public activity_id: number = NaN;
 
   constructor(props: Omit<Phrase, "id">, id?: number) {
     Object.assign(this, props);

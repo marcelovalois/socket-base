@@ -1,7 +1,6 @@
-import { Execution } from "../../entities/Execution";
+import { Phrase } from "../../entities/Phrase";
 
 export interface IExecutionsRepository {
-  listByUser(id: number): Promise<Execution[]>;
-  listByActivity(id: number): Promise<Execution[]>;
-  createExecution(execution: Execution): Promise<void>;
+  savePhrase(phrase: Phrase): Promise<void>;
+  getActivityLastPhrase(activity_id: number): Promise<Phrase | null>;
 }

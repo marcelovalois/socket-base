@@ -38,6 +38,7 @@ model Activity {
   phrases        Phrase[]
   executions     Execution[]
   participations Participation[]
+  Message    Message[]
 
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now()) @updatedAt
@@ -51,6 +52,8 @@ model Message {
   text            String
   pontuando_quote Boolean
   user_id         Int
+  activity_id     Int
+  activity        Activity    @relation(fields: [activity_id], references: [id])
   user            User        @relation(fields: [user_id], references: [id])
   executions      Execution[]
 
@@ -63,7 +66,7 @@ model Message {
 
 model Phrase {
   id          Int      @id @default(autoincrement())
-  order       Int
+  order       Int?
   text        String
   activity_id Int
   activity    Activity @relation(fields: [activity_id], references: [id])
@@ -77,15 +80,15 @@ model Phrase {
 }
 
 model Execution {
-  id                Int      @id @default(autoincrement())
-  activity_id       Int
-  user_id           Int
-  message_id        Int
-  participation_id  Int
-  participation     Participation @relation(fields: [participation_id], references: [id])
-  activity          Activity @relation(fields: [activity_id], references: [id])
-  user              User     @relation(fields: [user_id], references: [id])
-  message           Message  @relation(fields: [message_id], references: [id])
+  id               Int           @id @default(autoincrement())
+  activity_id      Int
+  user_id          Int
+  message_id       Int
+  participation_id Int
+  participation    Participation @relation(fields: [participation_id], references: [id])
+  activity         Activity      @relation(fields: [activity_id], references: [id])
+  user             User          @relation(fields: [user_id], references: [id])
+  message          Message       @relation(fields: [message_id], references: [id])
 
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now()) @updatedAt
@@ -96,12 +99,12 @@ model Execution {
 }
 
 model Participation {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   activity_id Int
   user_id     Int
   executions  Execution[]
-  activity    Activity @relation(fields: [activity_id], references: [id])
-  user        User     @relation(fields: [user_id], references: [id])
+  activity    Activity    @relation(fields: [activity_id], references: [id])
+  user        User        @relation(fields: [user_id], references: [id])
 
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now()) @updatedAt
