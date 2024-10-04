@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ListActivitiesByCreatorIdUseCase } from "./ListActivitiesByCreatorIdUseCase";
 import { z } from "zod";
 
-interface RequestWithUser extends Request {
+interface RequestWithUser extends RequestDTO {
   user: TokenPayload;
 }
 

@@ -1,7 +1,7 @@
 import { IActivitiesRepository } from "../../../repositories/interfaces/IActivitiesRepository";
 import { Phrase } from "../../../entities/Phrase";
 
-interface IUpdateActivityRequest {
+interface IUpdateActivityRequestDTO {
   id: number;
   title?: string;
   phrases?: Phrase[];
@@ -10,7 +10,7 @@ interface IUpdateActivityRequest {
 export class UpdateActivityUseCase {
   constructor(private activitiesRepository: IActivitiesRepository) {}
 
-  async execute({ id, title, phrases }: IUpdateActivityRequest): Promise<void> {
+  async execute({ id, title, phrases }: IUpdateActivityRequestDTO): Promise<void> {
     const activity = await this.activitiesRepository.findById(id);
 
     if (!activity) {

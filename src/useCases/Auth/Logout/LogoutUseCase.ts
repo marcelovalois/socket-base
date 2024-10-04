@@ -1,9 +1,9 @@
-interface ILogoutRequest {}
+interface ILogoutRequestDTO {}
 
 export class LogoutUseCase {
   constructor() {}
 
-  execute = async (data: ILogoutRequest) => {
+  execute = async (data: ILogoutRequestDTO) => {
     try {
       console.log(data);
     } catch (error) {

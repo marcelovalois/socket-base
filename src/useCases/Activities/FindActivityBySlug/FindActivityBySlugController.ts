@@ -1,23 +1,26 @@
-import { Request, Response, NextFunction } from "express";
-import { FindActivityByIdUseCase } from "./FindActivityByIdUseCase";
+import { NextFunction, Request, Response } from "express";
+
+import { FindActivityBySlugUseCase } from "./FindActivityBySlugUseCase";
 import { z } from "zod";
 
-const findActivityByIdSchema = z.object({
-  id: z.string().transform(Number),
+//Write your schema variable name below
+const findActivityBySlugSchema = z.object({
+  slug: z.string(),
 });
 
-export class FindActivityByIdController {
-  constructor(private findActivityByIdUseCase: FindActivityByIdUseCase) {}
+export class FindActivityBySlugController {
+  constructor(private findActivityBySlugUseCase: FindActivityBySlugUseCase) {}
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = findActivityByIdSchema.parse(req.params);
+      const { slug } = findActivityBySlugSchema.parse(req.params);
 
-      const activity = await this.findActivityByIdUseCase.execute(id);
+      const activity = await this.findActivityBySlugUseCase.execute({ slug });
 
       if (!activity) {
         return res.status(404).json({ success: false, message: "Activity not found", data: {} });
       }
+
       return res.status(200).json({ success: true, message: "Activity successfully found", data: activity });
     } catch (error) {
       if (error instanceof z.ZodError) {

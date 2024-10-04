@@ -1,14 +1,14 @@
 import jwt from "jsonwebtoken";
 import config from "../../../config/config";
 
-interface ICheckRequest {
+interface ICheckRequestDTO {
   pontuandoAuthToken: string;
 }
 
 export class CheckUseCase {
   constructor() {}
 
-  execute = async (data: ICheckRequest) => {
+  execute = async (data: ICheckRequestDTO) => {
     try {
       let decodedToken = null;
       const pontuandoAuthToken = data.pontuandoAuthToken;

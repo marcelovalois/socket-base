@@ -6,6 +6,40 @@ import { IActivitiesRepository } from "../interfaces/IActivitiesRepository";
 
 export class PrismaActivitiesRepository implements IActivitiesRepository {
   constructor() {}
+  async findBySlug(slug: string): Promise<Activity | null> {
+    try {
+      const activity = await prismaClient.activity.findFirst({
+        where: {
+          slug,
+        },
+        select: {
+          id: true,
+          title: true,
+          link: true,
+          user_id: true,
+          slug: true,
+        },
+      });
+
+      if (activity) {
+        return new Activity(
+          {
+            title: activity.title,
+            link: activity.link,
+            user_id: activity.user_id,
+            slug: activity.slug,
+          },
+          activity.id,
+        );
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new Error(`Error: ${error}`);
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  }
 
   async create(activity: Activity): Promise<ICreateActivityResponseDTO> {
     try {
@@ -49,6 +83,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
             select: {
               text: true,
               order: true,
+              activity_id: true,
             },
           },
           participations: {
@@ -107,6 +142,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
               id: true,
               text: true,
               order: true,
+              activity_id: true,
             },
           },
           participations: {
@@ -174,6 +210,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
             select: {
               text: true,
               order: true,
+              activity_id: true,
             },
           },
           participations: {
@@ -287,6 +324,7 @@ export class PrismaActivitiesRepository implements IActivitiesRepository {
               id: true,
               text: true,
               order: true,
+              activity_id: true,
             },
           },
           participations: {

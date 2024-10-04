@@ -3,7 +3,7 @@ import { User } from "../../../entities/User";
 import { IUsersRepository } from "../../../repositories/interfaces/IUsersRepository";
 import jwt from "jsonwebtoken";
 
-interface ILoginRequest {
+interface ILoginRequestDTO {
   email: string;
 }
 
@@ -14,7 +14,7 @@ interface UserWithToken extends User {
 export class LoginUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
-  execute = async (data: ILoginRequest): Promise<UserWithToken | null> => {
+  execute = async (data: ILoginRequestDTO): Promise<UserWithToken | null> => {
     try {
       const { email } = data;
 

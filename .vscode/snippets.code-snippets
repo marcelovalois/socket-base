@@ -50,11 +50,11 @@
     "scope": "javascript,typescript",
     "prefix": "usecase",
     "body": [
-      "interface I${1:Your}Request {}\n",
+      "interface I${1:Your}RequestDTO {}\n",
       "export class ${TM_FILENAME_BASE} {",
         "\tconstructor() {}\n",
         // "\n",
-        "\texecute = async (data: I${1:Your}Request) => {",
+        "\texecute = async (data: I${1:Your}RequestDTO) => {",
           "\t\ttry {",
             "\t\t\tconsole.log(data);$0",
           "\t\t} catch (error) {",

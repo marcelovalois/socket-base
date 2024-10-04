@@ -1,7 +1,7 @@
 export class Phrase {
   public id?: number;
   public text: string = "";
-  public order?: number;
+  public order?: number | null;
   public activity_id: number = NaN;
 
   constructor(props: Omit<Phrase, "id">, id?: number) {

@@ -5,7 +5,7 @@ import { Phrase } from "../../../entities/Phrase";
 import { IActivitiesRepository } from "../../../repositories/interfaces/IActivitiesRepository";
 import { ICreateActivityResponseDTO } from "./CreateActivityDTO";
 
-interface ICreateActivityRequest {
+interface ICreateActivityRequestDTO {
   user_id: number;
   title: string;
   phrases?: Phrase[];
@@ -14,7 +14,7 @@ interface ICreateActivityRequest {
 export class CreateActivityUseCase {
   constructor(private activitiesRepository: IActivitiesRepository) {}
 
-  async execute({ user_id, title, phrases }: ICreateActivityRequest): Promise<ICreateActivityResponseDTO> {
+  async execute({ user_id, title, phrases }: ICreateActivityRequestDTO): Promise<ICreateActivityResponseDTO> {
     // Cria um slug para a atividade usando uuid
     const slug = uuidv4();
 
