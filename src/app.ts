@@ -9,9 +9,18 @@ import("dotenv/config");
 
 const app = express();
 
+const allowedOrigins = ["https://pontuando.netlify.app", "http://localhost:5173"];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Verifica se a origem está na lista de permitidas ou se não há uma origem (ex. requisições de ferramentas como Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Não permitido pelo CORS"));
+      }
+    },
     credentials: true, // Permite cookies em solicitações entre domínios
   }),
 ); // Adiciona cabeçalhos HTTP necessários para permitir solicitações de diferentes origens
