@@ -11,7 +11,7 @@ export class PrismaExecutionsRepository implements IExecutionsRepository {
           activity_id,
         },
         orderBy: {
-          order: "desc",
+          id: "desc",
         },
       });
 

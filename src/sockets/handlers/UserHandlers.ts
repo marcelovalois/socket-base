@@ -118,7 +118,9 @@ export class UserHandlers {
           this.connectedUsers.unlockUser(activity_id, user_id);
         }
 
+        // Envia a nova lista de usuários conectados para todos os usuários na sala
         socket.to(activity_id).emit("onGetRoomUsers", this.connectedUsers.getRoomUsers(activity_id));
+        // Envia a lista de usuários conectados ao próprio socket
         socket.emit("onGetRoomUsers", this.connectedUsers.getRoomUsers(activity_id));
 
         if (ack) ack(JSON.stringify({ success: true, message: "User unlocked" }));

@@ -3,13 +3,17 @@ import { SocketWithUser } from "../../@types/Socket";
 import { Message } from "../../entities/Message";
 import { Phrase } from "../../entities/Phrase";
 import { IExecutionsRepository } from "../../repositories/interfaces/IExecutionsRepository";
+import { RoomManager } from "../RoomManager";
 
 const chatMessageSchema = z.object({
   text: z.string(),
 });
 
 export class MessageHandlers {
-  constructor(private executionsRepository: IExecutionsRepository) {}
+  constructor(
+    private executionsRepository: IExecutionsRepository,
+    private connectedUsers: RoomManager,
+  ) {}
 
   public handleChatMessage = async (socket: SocketWithUser, data: object, ack: (arg0: string) => void) => {
     try {
@@ -53,6 +57,19 @@ export class MessageHandlers {
       socket.to(activity_id).emit("onAnswerMessage", { ...message, user_name, incoming: true });
       // Envia a mensagem para o próprio usuário
       socket.emit("onAnswerMessage", { ...message, user_name, incoming: false });
+
+      // BLOQUEIA O ALUNO PARA NÃO RESPONDER MAIS
+
+      // Obtém o usuário que enviou a mensagem
+      const user = this.connectedUsers.getRoomUsers(activity_id).find((u) => u.id === user_id);
+      if (user) {
+        this.connectedUsers.lockUser(activity_id, user_id);
+      }
+
+      // Envia a nova lista de usuários conectados para todos os usuários na sala
+      socket.to(activity_id).emit("onGetRoomUsers", this.connectedUsers.getRoomUsers(activity_id));
+      // Envia a lista de usuários conectados ao próprio socket
+      socket.emit("onGetRoomUsers", this.connectedUsers.getRoomUsers(activity_id));
 
       // Envia uma resposta de sucesso
       if (ack) ack(JSON.stringify({ success: true, message: "Message broadcasted by server" }));

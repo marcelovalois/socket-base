@@ -28,7 +28,7 @@ export class ChatSocketHandler {
       this.prismaActivitiesRepository,
       this.connectedUsers,
     );
-    this.messageHandlers = new MessageHandlers(this.prismaExecutionsRepository);
+    this.messageHandlers = new MessageHandlers(this.prismaExecutionsRepository, this.connectedUsers);
     this.roomHandlers = new RoomHandlers(this.connectedUsers);
   }
 
