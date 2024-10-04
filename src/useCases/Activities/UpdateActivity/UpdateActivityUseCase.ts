@@ -19,7 +19,7 @@ export class UpdateActivityUseCase {
 
     await this.activitiesRepository.updateActivity({
       id,
-      title,
+      title: title || activity.title,
       phrases,
     });
   }

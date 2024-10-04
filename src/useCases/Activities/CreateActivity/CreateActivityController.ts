@@ -19,9 +19,9 @@ export class CreateActivityController {
 
   handle = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { title, user_id, phrases } = createActivitySchema.parse(req.body);
+      const { title, user_id } = createActivitySchema.parse(req.body);
 
-      const activity = await this.createActivityUseCase.execute({ title, user_id, phrases });
+      const activity = await this.createActivityUseCase.execute({ title, user_id });
 
       return res.status(201).json({ success: true, message: "Activity created successfully", data: activity });
     } catch (error) {

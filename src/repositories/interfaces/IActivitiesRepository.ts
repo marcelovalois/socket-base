@@ -8,7 +8,7 @@ export interface IActivitiesRepository {
   findById(id: number): Promise<Activity | null>;
   findBySlug(slug: string): Promise<Activity | null>;
   listByCreator(id: number): Promise<Activity[]>;
-  updateActivity(activity: Activity): Promise<void>;
+  updateActivity(activity: Optional<Activity, "slug" | "user_id">): Promise<void>;
   deleteActivity(id: number): Promise<void>;
   addUserToActivity(participation: Participation): Promise<void>;
   addUserWithLinkToActivity(participation: Participation): Promise<void>;

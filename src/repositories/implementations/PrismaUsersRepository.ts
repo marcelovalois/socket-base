@@ -219,6 +219,7 @@ export class PrismaUsersRepository implements IUsersRepository {
                 select: {
                   text: true,
                   order: true,
+                  activity_id: true,
                 },
               },
               participations: {

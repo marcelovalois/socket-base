@@ -31,7 +31,6 @@ export class UpdateUserUseCase {
       }
     }
 
-    const user = new User(data, data.id);
-    await this.usersRepository.update(user);
+    await this.usersRepository.update({ ...data } as User);
   };
 }
